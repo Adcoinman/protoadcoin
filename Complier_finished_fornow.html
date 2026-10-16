@@ -1,0 +1,3557 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!-- Write metadata and CSS(between <style> and </style>)  here (like title) -->
+  <title> (Unoffical) AP® Computer Science Principles Psuedocode Runner Version 0.5.3</title>
+  <style>
+    p {
+	 text-size: 20px;
+	}
+	textarea {
+	 resize: none
+	}
+	.invisible {
+	 visbility: hidden;
+	 width: 0px;
+	 height: 0px;
+	}
+	.NWS {
+	 white-space-collapse: preserve;
+	 border-width: 2px;
+	 border-color: black;
+	 border-style: solid;
+	 width: 40rem;
+	 height: 100px;
+	 overflow: scroll;
+	 background-color: rgb(230, 230, 230);
+	}
+	.boardInput {
+	 width: 30px
+	}
+	:root{
+	 --gameBorderColor: rgba(0,0,0,1);
+	}
+	.gameBoard{
+	 display: grid;
+	}
+	.passableSquare{
+	 margin: 0px;
+	  padding: 0px;
+      border-color: black;
+      border-width: 1.5px /* Is set to 2 and 2/3 px for some reason. */; 
+	  border-style: solid;
+	  height: 18.666px /* To correct for that, I am using this weird number. */;
+	  width:  18.666px;
+	  background-color: rgba(250,250,250,1);
+	}
+	.unpassableSquare{
+	 margin: 0px;
+	  padding: 0px;
+      border-color: black;
+      border-width: 1.5px /* Is set to 2 and 2/3 px for some reason. */; 
+	  border-style: solid;
+	  height: 18.666px /* To correct for that, I am using this weird number. */;
+	  width:  18.666px;
+	  background-color: rgba(10,10,10, 1);
+	}
+	.robotTop{
+	 margin-left: 1px;
+	 margin-bottom: 1px;
+	 border-left-color: transparent;
+	 border-right-color: transparent;
+	 border-bottom-color: black;
+	 border-style: solid;
+	 background-color: transparent;
+	  border-left-width: 8px;
+	 border-right-width: 8px;
+	 border-bottom-width: 15px;
+	 border-top-width: 0px;
+	 width: 0;
+	 height:0;
+	}
+	.robotRight{
+	 margin-left: 2px;
+	 margin-top: 1.5px;
+	 border-top-color: transparent;
+	 border-bottom-color: transparent;
+	 border-left-color: black;
+	 border-style: solid;
+	 background-color: transparent;
+	  border-left-width: 15px;
+	 border-top-width: 8px;
+	 border-bottom-width: 8px;
+	 border-right-width: 0px;
+	 width: 0;
+	 height:0;
+	 /* Explanation of triangles: Since the borders on both sides are invisible,
+	 and one border is twice the size of another, they both condense to meet in
+	 the center to still be bordering the object.*/
+	}
+	.robotLeft{
+	 margin-right: 2px;
+	 margin-top: 1.5px;
+	 border-top-color: transparent;
+	 border-bottom-color: transparent;
+	 border-left-color: black;
+	 border-style: solid;
+	 background-color: transparent;
+	  border-right-width: 15px;
+	 border-top-width: 8px;
+	 border-bottom-width: 8px;
+	 border-left-width: 0px;
+	 width: 0;
+	 height:0;
+	 }
+	.robotBottom{
+	 margin-right: 1.5px;
+	 margin-top: 2px;
+	 border-left-color: transparent;
+	 border-right-color: transparent;
+	 border-top-color: black;
+	 border-style: solid;
+	 background-color: transparent;
+	  border-top-width: 15px;
+	 border-left-width: 8px;
+	 border-right-width: 8px;
+	 border-bottom-width: 0px;
+	 width: 0;
+	 height:0;
+	}
+	.goal{
+	 margin: 0px;
+	  padding: 0px;
+      border-color: var(--gameBorderColor);
+      border-width: 1.5px /* Is set to 2 and 2/3 px for some reason. */; 
+	  border-style: solid;
+	  height: 18.666px /* To correct for that, I am using this weird number. */;
+	  width:  18.666px;
+	  background-color: rgba(150,150,150, 1);
+	}
+	.win {
+	font-family: "Courier New", "Arial", sans-serif;
+	font-size: 40px;
+	font-weight: bold;
+	text-decoration-line: underline overline;
+	text-decoration-style: double;
+	text-decoration-color: green;
+	text-shadow: 2px 2px 2px red, 2px 2px 2px red;
+	display: none;
+	}
+  </style>
+  </head>
+  <body>
+   <script>
+  "use strict"
+  let consoleHeight = 100
+  let canStore = false
+  let agreed = localStorage.getItem('checkboxStatus')
+  canStore = true
+  </script>
+  <!-- Link your pages if possible. This is going to be unoptimized HEAVILY -->
+        <nav>
+		<p> Documentation coming in version 0.5.4</p>
+		</nav>
+		<span id = "invisToggle">
+         <input type = "checkbox" id = "agreement" onchange = "sumbitLearningAgreement()"> I agree to the following by clicking this textbox:
+		 <br> I will not use this for purposes of solving questions in tests with this website or plugging homework code in without thinking. 
+		 <br>I agree to use this website for furthering my learning, not bypassing it, and understand that this tool is a privlege. <br>
+		 I deserve the taking away of scores and other punishments (if they are appropriate) for using this tool to escape learning. <br>
+		  I agree that it is no way the site's fault if I break this agreement, and in that case I should never use.
+		 <br> After breaking the agreement, I will not write code on this site unless my teachers explicitly allow me to.
+		 <br> The above line does not apply to refrencing the part breaking down the functions of each peice of psuedocode with examples.
+		 <br>Even by sumbitting any code, I agree to the preceding text even if the checkbox is unclicked.</input>
+		 </span>
+		 <span id ="CLEANUP"> <br> </span>
+		 <header>
+			<button id = "mikeTheBoardPlease"> Push this button to begin generating a board!</button>
+			<label> Width:</label>
+			<input type="number" id="width" class = "boardInput" value="7"> </input> 
+			<label> Height: </label>
+			<input type="number" id="height" class = "boardInput" value="7"> </input> 
+			<label> Method of encoding:</label>
+			<select id = "method" class="methodSelector"> 
+			<option value = "Basic" selected> BASIC </option>
+			<option value = "Random"> RANDOM </option>
+			</select>
+			<br>
+	    </header>
+		 <label id = "errorBoard"> </label>
+		 <br>
+		 <main>
+		 <section>
+		 <div id = "winText" class="win"> YOU WIN!</div>
+		 <audio id ="YOUWIN"> </audio>
+		 <label> Insert code here</label>
+		 <button onclick = "emptyTextArea.cols *= 1.25; emptyTextArea.cols += 1; saveSize()"> Increase row size</button>
+		  <button onclick = "emptyTextArea.cols *= 0.75; emptyTextArea.cols -= 1; saveSize()"> Decrease row size</button>
+		  <button onclick = "emptyTextArea.rows *= 1.25; emptyTextArea.rows += 1; saveSize()"> Increase row count </button>
+		  <button onclick = "emptyTextArea.rows *= 0.75; emptyTextArea.rows -= 1; saveSize()"> Decrease row count </button>
+		  <button onclick = "emptyTextArea.rows = 10;
+		  emptyTextArea.cols = 45; saveSize()"> Reset length and width</button>
+		 <br>
+		 <span class = "DataCollection">
+<textarea id = "initString" cols= "45" rows: "10" onchange ="saveSize()">  </textarea>
+		  </span> <br>
+	<button onclick = prepProgram()> Hit to sumbit the code! </button>
+	<p id = "add" class="NWS"> This is the console, where output shows up </p>
+	<button onclick= "emptyConsole()"> Push this button to clear the console</button> 
+	<button onclick="consoleHeight *= 1.5;document.getElementById('add').style.height = consoleHeight+'px'"> Expand console size</button>
+	<button onclick="consoleHeight /= 1.5;document.getElementById('add').style.height = consoleHeight+'px'"> Reduce console size</button>
+	</section>
+	<section>
+         <div id = "warnythingy"> </div>
+	<p id = "emojiError"> WARNING: DO NOT SUMBIT EMOJI INTO THE PROGRAM, IT MAY NOT WORK AS INTENDED </p>
+	<p> The following buttons are to change settings </p>
+	<button id = "settings1" onclick = "setSettingsValues('settings1', '#nval#')"> </button> 
+	<button id= "settings2" onclick = "setSettingsValues('settings2', '#nval#')"> </button> 
+	<button id = "settings3" onclick = "setSettingsValues('settings3', '#nval#')"> 
+	</button> <button id = "settings4" onclick = "setSettingsValues('settings4', '#nval#')"> </button>
+	<button id = "settings5" onclick = "setSettingsValues('settings5', '#nval#')"> </button>
+           <button id = "settings6" onclick = "setSettingsValues('settings6', '#nval#')"> </button>
+          <button id ="settings7" onclick = "setSettingsValues('settings7', '#nval#')"> </button>
+		  <button id ="settings8" onclick = "setSettingsValues('settings8', '#nval#')"> </button>
+		  <button id ="settings9" onclick = "setSettingsValues('settings9', '#nval#')"> </button>
+	<p> To see more on the rules, check out <a href= "https://apcentral.collegeboard.org/media/pdf/ap-computer-science-principles-exam-reference-sheet.pdf"
+	target = "_blank"> this link </a> </p>
+    </section>
+    <footer>	
+	<b> <p id = "warn"> Note that when you close this page, all changes shall be lost. For that reason I reccomend
+	 you copy and paste this into a document that remembers if you are to care about it again. </p> </b>  
+     <p> AP® is a registered trademark of the CollegeBoard that is in no way associated with this site at all, 
+	 <br> is not affiliated with this service, and likely has no clue it even exists.
+	 <br> Furthermore, CollegeBoard does not in any way endorse this service.
+	 <br> As said in the title, this is unofficial. Please do not sue me! </p>
+    <p id= "remind"> </p>
+    </footer>
+   <script >
+    "use strict"
+	
+	//import audio file here if you want to
+	
+   let linedString = []; let condArray = []
+   let emptyTextArea = document.getElementById('initString')
+   let storedValue; let methodRunTimes = 0 
+   const mathOperators = ['+', '-', '*', '/', '^', '<', '≠', '=', '>', '≥', ']','≤', '[', '\uF8FF', '\uF8FE', '\uF8FD']
+   const mathMinusBrackets = ['+', '-', '*', '/', '^', '<', '≠', '=', '>', '≥', '≤', '\uF8FF', '\uF8FE', '\uF8FD']
+  //\uF8FD = OR; \uF8FF = MOD; \uF8FE = AND \uF8FC = IN (in FOR EACH ITEM IN MYLIST)
+   //Make both text changers work so that these are the only possible values
+   if (canStore){ 
+   storedValue = localStorage.getItem('codePrevious')
+   if (storedValue != undefined && storedValue != null) {
+     emptyTextArea.value = JSON.parse(storedValue)
+   }
+   storedValue = localStorage.getItem('textareaRows')
+   if (storedValue != undefined && storedValue != null && storedValue != 'undefined') {
+     emptyTextArea.rows = JSON.parse(storedValue);
+   }
+   storedValue = localStorage.getItem('textAreaColumns')
+   if (storedValue != undefined && storedValue != null && storedValue != 'undefined') {
+    emptyTextArea.cols = JSON.parse(storedValue)
+   }
+   } else {let warnThemOfCodeLost = document.getElementById('warn')
+    warnThemOfCodeLost.innerText = 'If you are seeing this message, your code cannot save due to technical issues. \n Please copy your code somewhere else so that it is not lost upon page refresh.';
+   }
+   
+   //Old tests= Line 1: 2 + DISPLAY(12,10,12+1) Line 2: 2+3 Line 3: 12+(2+2) Line 4 : 12+(2+2) + DISPLAY(3) Line 5: 12+(2+2) + DISPLAY(3, 1+(2+2)) Line 6: 12 AND (2+2)
+   //Unpassed tests = Line 7: "DISPLAY(10)" Line 8: "2 + DISPLAY(12,10,12+1)" + DISPLAY(10)
+   
+   const bannedWords = ['<-', '←', '+', '-', '*', '/', '\uF8FF', '=', '^', '\uF8FD', '\uF8FE', '≠', '≥', '≤']
+   //UPDATE THIS LIST soon when you get new non-function terms
+   
+   let initString; let thingToChange; let condTypes = []; let insideProcedure = 0;
+   let runbackBoard = ''
+      function saveSize () {
+	  if (canStore) {
+	    console.log(emptyTextArea.rows, emptyTextArea.cols, emptyTextArea.value)
+	    localStorage.setItem('textareaRows', JSON.stringify(emptyTextArea.rows))
+		localStorage.setItem('textAreaColumns', JSON.stringify(emptyTextArea.cols))
+	    localStorage.setItem('codePrevious', JSON.stringify(emptyTextArea.value))
+	  }}
+	 
+	 let returnState = null; let valueNester = []; let robotRotation = "Right";
+	  let robotStartingPosition = ''; let playbackBoard = [];
+	 
+	 function prepProgram() {
+	 insideProcedure = 0; valueNester = []; robotRotation = "Right"
+	 linedString = []; varList = []; varValueList = []; typesList = []
+	 valueList = []; functionListCSP = []; valueAssigned$$ = ''; condArray = []; condTypes = []
+	 elseCondition = [0]; selectionArray = []; timesNested = 0; methodRunTimes = 0
+	 procedureData = []; returnState = null; playbackBoard = []
+	 document.getElementById('winText').style.display = "none"
+	 console.log(robotStartingPosition)
+	 if (robotStartingPosition) {
+	 let robot = document.getElementById('robot');
+	 robot.classList.value = "robotRight"
+	 robot.remove();document.getElementById(robotStartingPosition).append(robot)
+	 }
+	 let coolString = document.getElementById('initString')
+	  thingToChange = document.getElementById('add')
+	  thingToChange.innerText = ''
+	 console.log(coolString.value); console.log(thingToChange)
+	 initString = coolString.value
+	 //globalDisplay(initString, 'report')
+	 initString = ' ' + initString
+	  initString = initString.split("")
+	  let foundNewLine = false
+	  for (let i=0; i < initString.length; i++) {
+	   //if (initString[i] == '\r') {initString[i] == ''}
+	   //if (initString[i] == 'r' && initString [i-1] == '\\') {
+	   //initString[i] = ''; initString[i-1] = ''}
+	   if (initString[i] == '\n') {
+	     console.log('found it!')
+		 
+	     initString[i] = ' Line 1: '
+		 foundNewLine = true
+	   }
+	   if (i == 0) {
+	     console.log('found it!')
+		 
+	     initString[i] = 'Line 1: '
+		 foundNewLine = true
+	   }
+	   if (foundNewLine) {
+	    if (initString[i] == ' ') {
+		  initString[i] = ''
+		} else {foundNewLine = false}
+	   }
+	  }
+	  initString = initString.join("")
+	  //initString = initString.replace(/\\n/g,"/n");
+	  console.log(initString)
+	  stepsOrder()
+	  playRunback()
+	 }
+	 function emptyConsole () {
+	  if (thingToChange != undefined) {
+	   thingToChange.innerText = " "
+	  }
+	 }
+	 
+   //let initString = 'Line 4: a <- RANDOM(1,3) Line 3: z <- DISPLAY(NOT(false)) Line 1: x <- NOT(2) Line 2: y <- INPUT()' //try for all operations
+   //Line 1: x<- INPUT("Hello, how are you?", "terrible") Line 2: DISPLAY(x) #Line 2: Displays the value stored in x# Line 3: x <- "Quite " + x Line 4: DISPLAY(x) Line 5: DISPLAY("Yadda Yadda Yadda") 
+   
+   //let errorMaker = 'This is an array I am making'; errorMaker.push(undefined)
+   
+   //START HERE
+  let varList = []
+  let varValueList = []
+  let typesList = []
+  let valueList = []; let selectionArray = []; let elseCondition = [0]; let timesNested = 0
+  const functionListJS = ['APPEND','CAN_MOVE','DISPLAY', 'ELSE', 'FLOOR','FOREACH', 'IF', 'INPUT', 'INSERT', 'LENGTH', 'MOVE_FORWARD','NOT','PROCEDURE','RANDOM', 'REMOVE','REPEAT', 'REPEATUNTIL', 'RETURN', 'ROTATE_LEFT', 'ROTATE_RIGHT','SETTINGSCHANGE', 'TYPEOF', 'TYPESET'] //Make these
+   let functionListCSP = [] //These should contain functions in the code
+   let procedureData = [] //This is the data associated with the procedures
+   
+  function variableIsValid(suspect, runExtraTest = false) {
+    if (runExtraTest) {
+	  return !(justRegex.test(suspect)) && (typeof(convertNumbers(suspect, false, false)) == 'string' && suspect.split('"') == suspect && suspect.split(",").length === 1 && findFunction(suspect) == -1 && linearSearchList(suspect, mathMinusBrackets) == -1 &&(suspect)[0] != '0' && (suspect)[0] != '1'&& (suspect)[0] != '2'&& (suspect)[0] != '3'&& (suspect)[0] != '4'&& (suspect)[0] != '5'&& (suspect)[0] != '6'&& (suspect)[0] != '7'&& (suspect)[0] != '8'&& (suspect)[0] != '9' && suspect[0] != '[' &&!(!(settings.canMoveParametersString) && (suspect == 'forward' || suspect == 'backward' || suspect == 'left' || suspect == 'right')))
+	}
+    return (typeof(convertNumbers(suspect, false, false)) == 'string' && suspect.split('"') == suspect && suspect.split(',').length === 1 &&findFunction(suspect) == -1 && linearSearchList(suspect, mathMinusBrackets) == -1 &&(suspect)[0] != '0' && (suspect)[0] != '1'&& (suspect)[0] != '2'&& (suspect)[0] != '3'&& (suspect)[0] != '4'&& (suspect)[0] != '5'&& (suspect)[0] != '6'&& (suspect)[0] != '7'&& (suspect)[0] != '8'&& (suspect)[0] != '9' && suspect[0] != '[' &&!(!(settings.canMoveParametersString) && (suspect == 'forward' || suspect == 'backward' || suspect == 'left' || suspect == 'right')))
+  }
+  let stillWaiting;
+  //Make every function async?? that would be very hard! And necesary to make a
+  //wait this long function.
+    async function playRunback(seconds) {
+    //Game plan: Make the current functions create a log of all the instructions done.
+   //Fire them first, store a list of robot movements, and defer any errors that
+   //would occur until then(stored in pairs)   
+   //n,n is the id of the space to move to, L and R stand for Left and Right,
+   //B stands for left the board, G stands for reached the goal, U stands for
+   //unpassable space reached
+   let robot = document.getElementById('robot');
+   if(robot == null) {return 0}
+   if (robotStartingPosition) {
+	 robot.classList.value = "robotRight"; robotRotation = "Right";
+	 robot.remove();document.getElementById(robotStartingPosition).append(robot)
+	 }
+   console.log(playbackBoard);
+   for (let i=0; i < playbackBoard.length; i++) {
+     switch(playbackBoard[i]) {
+	 case 'B': globalDisplay('You have broken through the boundaries of the board','error'); break;
+	 case 'U': globalDisplay('You have attempted to pass through an unpassable (black) space. You cannot do that!', 'error')
+	 case 'R': rotateRobot('Right'); await waitFor(0.5); break;
+	 case 'L': rotateRobot('Left'); await waitFor(0.5); break;
+	 case 'G': document.getElementById('winText').style.display = "block"; globalDisplay('You have won the game! The program has ended now!').endedNow(); break;
+	 default: robot.remove(); document.getElementById(playbackBoard[i]).append(robot); await waitFor(1);
+	 }
+   }
+   
+   }
+  
+  function waitFor(seconds) {
+   return new Promise((resolve, reject) => {
+     setTimeout(()=> {
+	 console.log('sorry to keep you waiting!')
+     resolve('YAYA!')	 
+   }, seconds*1000) } )
+  }
+  
+  const functions = {
+    FLOOR: function(floored){
+      floored = floored[0]
+      if (typeof(floored) != 'number') {floored = boolNum(floored)}
+     return Math.floor(floored)
+    },
+     CAN_MOVE: function(movingArray) {
+	  return canMove(movingArray[0])
+	 },
+     MOVE_FORWARD:  function(forwardArray) {
+	  let errorChecker =  moveForward()
+      if (errorChecker == '#B') {playbackBoard.push('B')}
+	  else if (errorChecker == '#G') {playbackBoard.push('G')}
+	  else if (errorChecker == '#U') {playbackBoard.push('U')}
+	  else if (Array.isArray(errorChecker)) {playbackBoard.push(errorChecker[0], 'G')}
+	  else {playbackBoard.push(errorChecker)}
+	 //The reason for all of this is I may move to using Javascript 
+	 //converting as opposed to custom logic made inside Javascript
+	 return undefined
+	 },
+	 ROTATE_RIGHT: function(rightArray) {
+	 rotateRobot('Right')
+	  playbackBoard.push('R')
+	 },
+	 ROTATE_LEFT: function(leftArray) {
+	 rotateRobot('Left')
+	  playbackBoard.push('L')
+	 },
+     RETURN: function(returnArray) {
+	 console.log(returnArray)
+	   if (insideProcedure != 0) {
+	     returnState = true
+	     if (returnArray.length == 1) {returnState = returnArray[0]; return returnState}
+		 returnState = returnArray; return returnArray
+	   } else {globalDisplay('Cannot return something outside of a procedure', 'error')}
+	 },
+     PROCEDURE: function(procArray) {
+	 
+	  return undefined
+	 //see if JSON for stored arrays works.
+	 },
+     APPEND: function (appendArray) {
+	 methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	 //added a new boolean for if the function is INSERT, APPEND, or REMOVE, in which case the first parameter is not converted yet.
+	   console.log(appendArray); console.log('method APPEND')
+      let indexofArray = binarySearch(appendArray[0], varList)
+	   if (indexofArray == -1) {
+	   appendArray[0] = convertNumbers(appendArray[0])
+	   } else { appendArray[0] = varValueList[indexofArray]}	  
+	   if (appendArray.length != 2) {globalDisplay('APPEND requires exactly two parameters, an array and then a value to add to it (not undefined or another array).', 'error')}
+	   if (!(Array.isArray(appendArray[0]))) {globalDisplay('The first parameter of APPEND must be an array.', 'error')}
+	   if (Array.isArray(appendArray[1]) || appendArray[1] == undefined) 
+	   {globalDisplay('The second parameter of APPEND cannot be an array or undefined (since every empty value in an array already is undefined, anyway)', 'error')}
+	   appendArray[0].push(appendArray[1])
+	   if (indexofArray != -1) {varValueList[indexofArray] = appendArray[0]}
+	   console.log(appendArray, indexofArray, varValueList)
+	   return appendArray[0]
+	 },
+	 FOREACH: function (eachArray) {
+	   eachArray[1] = convertNumbers(eachArray[1])
+	   let alreadyDefined = null
+	   if (eachArray.length != 3) { globalDisplay('FOR EACH requires a valid variable identifier between EACH and IN, a list after IN, and NOTHING ELSE!', 'error')}
+	   Array.isArray(eachArray[1]) || globalDisplay('The list part of FOR EACH item in aList must be a list. This is not a list.', 'error')
+	   variableIsValid(eachArray[0], true) || globalDisplay(`${eachArray[0]} is not a valid thing to assign. If you're new at this, then you might not know that the things we assign as variables
+	   are not values like 67 or strings like "Skibidi Rizz", or functions like DISPLAY("Emotional Damage!") (or even DISPLAY). 
+	   We assign variables to letters without quotes around them like all the ones that are making 
+	   up this message (at least, visually, to you). Please remember that and fix it.
+	   We cannot assign things that start with numbers, or contain mathematical symbols (excluding AND, OR, and MOD)
+	   Side note: AND, OR, and MOD (also IN) must be seperated with spaces when you are using them with variables. x AND y is good, 
+	   2 AND 4 is good, 2AND4 is good, but xANDy is bad. Capiche?
+	   Also, cool story...
+	    In page 7 of the AP Computer Science Principles Exam Refrence Information (psuedocode guide which this website is based off of), the description for CAN_MOVE includes the line "the value of (the parameter allowed into CAN_MOVE) can be left, right, forward or backward." If taken literally, this implies that the literal text (NOT A STRING) is passed in as a parameter. That is a very bad idea because variables named left,right,forward, or backward could  mess up the code. Which, if you are getting this error, is EXACTLY what happened. \n There is a setting that exsists called canMoveParametersString in the settings. Turning it off fixes this bug, but it will require to to use "forward", "backward", "left", and "right" with quotes surrounding them instead of like you previously have.
+	   
+	   The variables we assign cannot be special words. In this case, that includes AND, OR, MOD, IN, ELSE, FOREACH, TIMES, and PROCEDURE
+	   If you're not new... STOP TROLLING! DO YOU KNOW HOW FOOLPROOF PEOPLE HAVE TO MAKE THEIR CODE 
+	   BECAUSE OF PEOPLE LIKE YOU!!`, 'error')
+	    if (eachArray[1].length == 0){return undefined} //if array is empty, skip everything.
+		let indexOfTempPlacement = binarySearch(eachArray[0], varList, '<');
+		indexOfTempPlacement++;
+		if (varList[indexOfTempPlacement] == eachArray[0]) {
+		 alreadyDefined = varValueList[indexOfTempPlacement] 
+		 varValueList[indexOfTempPlacement] = undefined
+		 //saved for future use if value already exsisted
+		} else {
+		 varList = superPush(varList, indexOfTempPlacement,eachArray[0]);
+		 varValueList = superPush(varValueList, indexOfTempPlacement, undefined)
+		 //or created if never exsisted
+		}
+		eachArray[2] = condArray[(eachArray[2].substring(1, eachArray[2].length-1))]
+		eachArray[2] = splitOutsideFuncAndString(eachArray[2],',')
+		console.log(eachArray[2])
+		//using substring to ignore the hashtags
+		let condTypeList = '##';
+	 let storedCode = runConds(eachArray[2], condTypeList)
+	    if(returnState != null) {return returnState}
+		  let storedTypes = JSON.stringify(storedCode[1])
+		  condTypeList = storedCode[1]
+		  eachArray[2] = storedCode[0]
+		  storedCode = JSON.stringify(storedCode[0])
+
+	  //console.log(eachArray, varList, varValueList, alreadyDefined, condTypeList); 
+	   console.log(storedCode); console.log(storedTypes, condTypeList, eachArray[2])
+	   console.log('method FOREACH')
+	   let iterationNumber =0
+	   while (iterationNumber < eachArray[1].length) {
+	   methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	    varValueList[indexOfTempPlacement] = (eachArray[1])[iterationNumber]
+		console.log(varList, varValueList, varValueList[indexOfTempPlacement])
+		
+		runConds(eachArray[2], condTypeList)
+		if(returnState != null) {return returnState}
+		//potentially include variable locality soon.
+		
+		eachArray[2] = JSON.parse(storedCode)
+			 condTypeList = JSON.parse(storedTypes)
+		
+		if (varList[indexOfTempPlacement] != eachArray[0]) {
+		  indexOfTempPlacement = binarySearch(eachArray[0],varList)
+		  //if the index does not correspond to the term in varList anymore, update the index.
+		}
+		console.log(storedCode, storedTypes, eachArray[2], condTypeList)
+	    iterationNumber++;
+	   }
+	   
+	   //Iteration code goes here
+	   
+	   let indexOfTemp = binarySearch(eachArray[0], varList)
+	   if (alreadyDefined == null) {
+	  varList = superShift(varList, indexOfTemp)
+	  varValueList = superShift(varValueList, indexOfTemp)
+	  } else {varValueList[indexOfTemp] = alreadyDefined}
+	  console.log(varValueList,varList)
+	 //Removes the variable if it never exsisted, else simply re-inserts the
+	 //previous value back into it.
+	 return undefined
+	 },
+     INSERT: function(insertArray) {
+	 methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	  console.log(insertArray);
+	  let indexofArray = binarySearch(insertArray[0], varList)
+	  if (indexofArray == -1) {
+	    insertArray[0] = convertNumbers(insertArray[0])
+	  } else { insertArray[0] = varValueList[indexofArray]}
+	  console.log(insertArray, indexofArray)
+	  if (insertArray.length != 3) {globalDisplay('INSERT takes three parameters, an array, the index in which the value needs to be inserted, and the value itself')}
+	  if (!(Array.isArray(insertArray[0]))) {
+	  globalDisplay('The first parameter of INSERT must be an array.', 'error')
+	  }
+	  if (Array.isArray(insertArray[2]) || insertArray[2] == undefined) 
+	   {globalDisplay('The third parameter of INSERT cannot be an array or undefined (since every empty value in an array already is undefined, anyway)', 'error')}
+	   if (typeof(insertArray[1]) != 'number' || insertArray[1] < 1 || insertArray[1] > insertArray[0].length) {
+        globalDisplay('The second parameter of INSERT must be a number between 1 and the length of the list, which is ' + insertArray[0].length +'. Once again, this langauge starts counting its arrays at 1 instead of 0 like other langugages do.', 'error')	   
+	   }
+	   insertArray[0] = superPush(insertArray[0], insertArray[1]-1, insertArray[2]);
+	   if (indexofArray != -1) { varValueList[indexofArray] = insertArray[0]}
+	   console.log(insertArray, varValueList);
+	  return insertArray[0]
+	 },
+	 LENGTH: function(longArray) {
+	 if (longArray.length != 1 || !((Array.isArray(longArray[0])) || typeof longArray[0] == 'string')){
+	   globalDisplay('LENGTH requires one parameter, and requires that one parameter to be an array or string. If that is not the case (like now), the function will not work.', 'error')
+	 }
+     if(typeof(longArray[0]) == 'string'){ return longArray[0].length -2}
+	  return longArray[0].length
+	 },
+	 REMOVE: function(trashArray) {
+	 methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	  console.log(trashArray); console.log('method REMOVE')
+      let indexofArray = binarySearch(trashArray[0], varList)
+	   if (indexofArray == -1) {
+	   trashArray[0] = convertNumbers(trashArray[0])
+	   } else { trashArray[0] = varValueList[indexofArray]}	  
+	   if (trashArray.length != 2) {globalDisplay('REMOVE requires exactly two parameters, an array and then an index inside the array.', 'error')}
+	   if (!(Array.isArray(trashArray[0]))) {globalDisplay('The first parameter of REMOVE must be an array.', 'error')}
+	   if (typeof(trashArray[1]) != 'number' || trashArray[1] < 1 || trashArray[1] > trashArray[0].length) 
+	   {globalDisplay('The second parameter of REMOVE must be a number between 1 and the length of the array, which is '+trashArray[0].length+'. Remember that this language requires 1-based indexing, meaning we start counting the indexes of our arrays at 1 instead of 0 like other langauges do.', 'error')}
+	   trashArray[0]= superShift(trashArray[0], trashArray[1]-1)
+	   if (indexofArray != -1) {varValueList[indexofArray] = trashArray[0]}
+	   console.log(trashArray, indexofArray, varValueList)
+	   return trashArray[0]
+	 },
+     TYPEOF: function(typeArray) {
+	     methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+         if (typeArray.length != 1) {
+           globalDisplay('Fun news! You can only find the type of one term at once!', 'error'); return '#ABORT#'
+         }
+        typeArray = typeArray[0]
+        //typeArray = convertNumbers(typeArray)
+        console.log(typeArray)
+		//make sure this works with arrays at some point
+		if (Array.isArray(typeArray)){
+		typeArray = '\"ARRAY\"'
+		} else {
+       typeArray = typeof(typeArray)
+       typeArray = typeArray.toUpperCase()
+	   typeArray = typeArray.padStart(typeArray.length +1, '"')
+	   typeArray = typeArray.padEnd(typeArray.length +1, '"')
+       }
+	   return typeArray
+     },
+  TYPESET: function(setArray) {
+   //(console.log(setArray)).push("")
+     methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+      //fix this to work with arrays when it works
+      if (setArray.length != 2){
+       globalDisplay('TYPESET works such that you need 2 parameters, the value you want set to a type and the value that is going to be set. Any less makes no sense', 'error'); return '#ABORT#'
+     }
+      //try to see if you can pass any functions into it
+      let typeToSet = setArray[1]
+       let valueGettingChanged = setArray[0]
+       if (typeToSet != '"ARRAY"' && typeToSet != '"BOOLEAN"' && typeToSet != '"UNDEFINED"' && typeToSet != '"NUMBER"' && typeToSet != '"STRING"') {
+            globalDisplay(`That is not a valid type at all. Your type, ${typeToSet}, is not "STRING", "BOOLEAN", "NUMBER", or "UNDEFINED". Note the strings preceding them, as they are parameters. `, 'error'); return '#ABORT#'
+       }
+      if (typeToSet == '"UNDEFINED"') { return undefined}
+     if (typeToSet == '"BOOLEAN"') {
+        if (typeof(valueGettingChanged) == 'number') {
+          if (valueGettingChanged == 0) { return false}
+           return true
+        }
+      if (typeof(valueGettingChanged) == 'string') {
+         if (valueGettingChanged == '""' || (settings.stringFalseIsFalse && valueGettingChanged == '"false"')) { return false}
+      return true
+      }
+        if (valueGettingChanged == undefined) { return false} 
+        if (valueGettingChanged == true || valueGettingChanged == false) {return valueGettingChanged}
+      }
+
+     if(typeToSet == '"STRING"') {
+	    console.log('STRING CONVERSTION')
+        return '"' + valueGettingChanged + '"'
+      }
+	  if (typeToSet == '"ARRAY"') {
+	   return [valueGettingChanged]
+	  }
+      if (typeToSet == '"NUMBER"') {
+         if (valueGettingChanged == undefined) {return  0}
+        if (typeof(valueGettingChanged) == 'number') {
+           return value
+         }
+         if(valueGettingChanged === true) {return 1}
+         if(valueGettingChanged === false) {return 0}
+          if(typeof(valueGettingChanged) == 'string') {
+		  valueGettingChanged = valueGettingChanged.split("")
+		  valueGettingChanged.shift();valueGettingChanged.pop(); valueGettingChanged = valueGettingChanged.join("")
+		  console.log(valueGettingChanged)
+		  //'failed'.push(undefined)
+		   valueGettingChanged = valueGettingChanged.replace(/\s/g,'+')
+           valueGettingChanged = doMath(valueGettingChanged, 2);
+           let operationList = valueGettingChanged[1]; valueGettingChanged = valueGettingChanged[0]		   
+		   let previousSetting = settings.undefinedError; let pCount = 0
+		   for (let i=0; i < valueGettingChanged.length; i++) {
+		     if (valueGettingChanged[i] == '(') {
+			  pCount++;
+			 }
+			 if (valueGettingChanged[i] == ')') {
+			  pCount--;
+			 }
+		   }
+		    if (pCount != 0) {
+			globalDisplay('You have used a function, or your parentheses don\'t add up. Both are errors that cannot be ignored.', 'error')
+			'intentional Error by Psuedocode Runner'.confirmed()
+			}
+		   console.log(valueGettingChanged, operationList)
+		   //'end'.confirmed(undefined)
+		   for (let i=0; i < valueGettingChanged.length; i++) {
+		     if (typeof(valueGettingChanged[i]) != 'number') {
+			   if (settings.stringNumConvertTryhard == false) {
+			     globalDisplay(`This value, ${valueGettingChanged[i]} cannot be turned into a number!
+				 It's not even a variable! It's just plain text! That's really bad! Turn stringNumConvertTryhard on in your settings
+				 if you want this error to stop popping up, we will just completly ignore the value.`, 'error')
+				 'Intentional Error By PsuedoCode Runner Due to PsuedoCode Error'.confirmed()
+			   }
+			   valueGettingChanged[i] = undefined
+			   settings.undefinedError = false
+			 }
+		   } //end for
+		   valueGettingChanged = doMath(valueGettingChanged, 2, operationList)
+		   settings.undefinedError = previousSetting
+		   if (valueGettingChanged == undefined) {return 0}
+		   console.log(valueGettingChanged, 'finished with typesetting')
+		   return valueGettingChanged
+		  } //end else strings run functions
+		  } //end String To Number
+
+     },
+	 SETTINGSCHANGE: function(changeArray) {
+	   methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+          let setting = changeArray[0]
+          let ValueToSet = changeArray[1]
+         if (settings[setting] == undefined || setting == 'array') {
+             globalDisplay('That is not a valid setting. The names of the settings are on the buttons.', 'error'); return 0
+          }
+         if (ValueToSet == true || ValueToSet == false) {
+         if (ValueToSet != settings[setting]) {
+		   let numberofSetting
+		   for (let i=0; i < settings.array.length; i++) {
+		     if (settings.array[i] == setting) {
+			  numberofSetting = i
+			 }
+		   }
+           console.log(numberofSetting)		  
+		  setSettingsValues(`settings${numberofSetting+1}`, '#nval#')
+		 }
+		 console.log(settings)
+        return undefined
+          } else { globalDisplay('No valid values exist that are not true and false right now for any setting. Truthiness does not work for changing settings because I think that is a very bad idea.', 'error'); return '#ABORT#'}
+      },
+     IF : function(ifArray) {
+	     console.log(ifArray)
+		 methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	   if ((ifArray[1])[0] == '#') {
+	     ifArray[1] = ifArray[1].split("");
+		 ifArray[1].pop(); ifArray[1].shift(); ifArray[1] = ifArray[1].join("")
+		 console.log(ifArray[1])
+		 console.log(ifArray[0])
+		 if (typeof(ifArray[0]) != 'boolean' && settings.truthiness == false) {
+		 globalDisplay(`Booleans only! Truthiness is off, meaning only boolean values (true and false)
+		 are allowed for IF. A simple fix would be to add a NOT= 0 at the end if you want to keep your
+		 truthiness-using thing. If not, then that's a big problem for you! Unless you, you know, want to set truthiness to on`, 'error')
+		 return '#ABORT#'
+		 }
+		 //if (Array.isArray(ifArray[0])) {globalDisplay('Using random whole arrays does not work in IF statements.', 'error')}
+		 if(convertNumbers(ifArray[0])) {
+		    ifArray = condArray[(ifArray[1])];
+			
+			ifArray = splitOutsideFuncAndString(ifArray, ',')
+			console.log(ifArray, condArray);
+			//let errorMaker = undefined; errorMaker.push(undefined)
+		   let condTypeList = runConds(ifArray)
+		   ifArray = condTypeList[0]
+		   condTypeList = condTypeList[1]
+		   console.log(ifArray, condTypeList)
+		   //let errorMaker = undefined; errorMaker.push(undefined)
+		   return runConds(ifArray, condTypeList)
+		 } else {elseCondition[timesNested] = 2 } //Check if there are errors with nested conditionals
+	   } else {
+	   globalDisplay(`You have used too many parameters. IF only takes one parameter.
+	   To be clear, parameters are things broken apart by commas. They have no Purpose
+	   inside if statements, as joining conditonals together is done with AND and OR.`, 'error')
+	   return '#ABORT#'
+	   }
+	 },
+	 ELSE: function(elseArray) {
+	  //globalDisplay(elseArray + ' made it to method ELSE with the number being ' + elseCondition, 'report')
+	  methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	  if ((elseArray[0])[0] == '#') {
+	   elseArray[0] = elseArray[0].split("")
+	   elseArray[0].shift(); elseArray[0].pop()
+	   if (elseCondition[timesNested] == 1) {
+	     elseArray = +(elseArray[0].join(""))
+		 elseArray = condArray[elseArray]
+		 elseArray = splitOutsideFuncAndString(elseArray, ',')
+		 console.log(elseArray)
+		 //let errorMaker = undefined; errorMaker.push(undefined)
+		 let condTypeList = runConds(elseArray)
+		 elseArray = condTypeList[0]
+		 condTypeList = condTypeList[1]
+		 return runConds(elseArray, condTypeList)
+	   }
+	  } else {
+	  globalDisplay(`Did you know that ELSE has no parameters? Did you know that this error May
+	  even be inacessible? Let me know if you get this!`, 'error')
+	  return '#ABORT#'
+	  }
+	  return undefined
+	 },
+	 REPEAT: function(repeatArray) {
+	  globalDisplay(repeatArray + ' made it to method REPEAT!', 'report')
+	   if((repeatArray[1])[0] == '#') {
+	     repeatArray[1] = repeatArray[1].split(""); repeatArray[1].shift(); repeatArray[1].pop();
+		 repeatArray[1] = +(repeatArray[1].join(""))
+		 repeatArray[1] = condArray[(repeatArray[1])]
+		 repeatArray[1] = splitOutsideFuncAndString(repeatArray[1], ',')
+		 let timesRepeated = 0
+                        let repeatOpList; let condTypeList = '##'
+						console.log('first doMath begins here')
+		 let valueSeen = doMath((repeatArray[0].toString()), true)
+                         repeatArray[0] = (valueSeen[0]);
+						 for (let i=0; i < repeatArray[0].length; i++) {
+						   if (((repeatArray[0])[i])[0] == '[' && ((repeatArray[0])[i])[(repeatArray[0])[i].length -1] == ']') {
+						    if (settings.truthiness) {
+							(repeatArray[0])[i] = 1 - ((repeatArray[0][i]).length == 2)
+						   } else {globalDisplay('Truthiness means that whole arrays are not supported in REPEAT because they are not numbers.', 'error')}
+						   }
+						 }
+						 console.log(repeatArray[0])
+                         repeatOpList = valueSeen[1]
+						 let storedAmountOfTimes = (repeatArray[0]).join("\n")
+						 console.log('second doMath begins here', valueSeen, storedAmountOfTimes, repeatArray[0])
+						 
+                         valueSeen = doMath(repeatArray[0], false, repeatOpList)
+          if (typeof(valueSeen) != 'number') {
+		   if (settings.truthiness) {
+		    valueSeen = (boolNum(valueSeen))[0]
+			console.log(valueSeen)
+			typeof(valueSeen) == 'number' || globalDisplay('This is not a number, even after truthiness has been applied to it. Because this is a number, REPEAT cannot do any further operations.', 'error')
+		   } else {
+		    globalDisplay('Truthiness is off, and your value '+ valueSeen+' is not a number and so it cannot be used for REPEAT.', 'error')
+		   }
+		  }
+		  let storedCode = runConds(repeatArray[1], condTypeList)
+		  let storedTypes = JSON.stringify(storedCode[1])
+		  condTypeList = storedCode[1]
+		  repeatArray[1] = storedCode[0]
+		  storedCode = JSON.stringify(storedCode[0])
+		 console.log(valueSeen, repeatArray[1])
+		 console.log(repeatArray[0], storedCode, storedTypes)
+		 console.log(repeatArray[1], condTypeList)
+		 console.log(storedCode)
+		 //let err = 0; err.push(undefined)
+          if (typeof(valueSeen) != 'number' && settings.truthiness == false) {
+		     globalDisplay('Truthiness setting is off, meaning that the non-number you passed cannot be turned into a number at all. \n Sorry for the inconvience!', 'error')
+			 return '#ABORT#'
+		  }              
+		 //CHANGE ORDER FOR CONVERTNUMBERS TO HAPPENING BEFORE IT ENTERS THE FUNCTION
+		 while (timesRepeated < valueSeen) {
+		 methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	       console.log(methodRunTimes, 'FINAL JERONA!!!')
+		  runConds(repeatArray[1], condTypeList) 
+		  if(returnState != null) {return returnState}
+                         //You should check this because it seems like it may be a little dangerous to modify the code between repeats.
+            
+			 repeatArray[1] = JSON.parse(storedCode)
+			 condTypeList = JSON.parse(storedTypes)
+			 repeatArray[0] = storedAmountOfTimes.split("\n")
+		  valueSeen = doMath(repeatArray[0], false, repeatOpList)
+		  if (typeof(valueSeen) != 'number' && settings.truthiness == false) {
+		     globalDisplay('Truthiness setting is off, meaning that the non-number you passed cannot be turned into a number at all. \n Sorry for the inconvience!', 'error')
+			 return '#ABORT#'
+		  }
+		  console.log(repeatArray[1], condTypeList)
+		  console.log(valueSeen, 'GIASFELF', storedAmountOfTimes)
+		  //let err ='failed'.push(undefined)
+		  timesRepeated++
+		 }
+	   } else {
+	    globalDisplay(`REPEAT only has one number. I... don't know how you got this error. 
+		If possible, avoid using unnesecary commas. Oh, and that includes inserting whole arrays into this.`, 'error')
+	    return '#ABORT#'
+	   }
+	 },
+    DISPLAY: function(displayArray) {
+	 methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	 console.log(displayArray)
+	 for (let i=0; i < displayArray.length; i++) {
+	   if (Array.isArray(displayArray[i])) {
+	    displayArray[i] = '[' + displayArray[i].join(", ") + ']'
+	   }
+	 }
+	 displayArray = displayArray.join('    ')
+	 globalDisplay(displayArray)
+	 return undefined
+	//Each single call of DISPLAY is on the same line.
+	},
+	INPUT: function(inputArray) { let msg; let inputted;
+	 methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	 if (inputArray[0] == undefined || inputArray[0] == '') {msg = "You have been asked to provide input for a program. Please provide it here"
+	 } else {
+	 msg = inputArray[0]}
+	 if (inputArray[1] == undefined || inputArray[1] == ''){ inputted = ''
+	 } else {inputted = inputArray[1]; inputted = inputted.slice(1, inputted.length-1)}
+	 let result = prompt(msg, inputted); if (result == null) {return undefined}
+     msg = convertNumbers(result); if (typeof(msg) == 'string') {result = result.padStart(result.length+1, '"')
+	 result = result.padEnd(result.length+1, '"')} console.log(result, 'result of input');
+	 if (result == 'undefined'|| result == undefined) {return '"undefined"'}
+     return result	  
+	},
+	NOT: function(boolArray) {boolArray = convertNumbers(boolArray[0]); 
+	console.log(boolArray).jerona()
+	methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	if (typeof(boolArray) != 'boolean') {
+	 if (!(settings.truthiness)) {globalDisplay(`NOT accepts only booleans. ${boolArray} is not a number`, 'error'); return '#ABORT#'}
+	 else {boolArray = boolNum(boolArray); boolArray = boolArray[0]; console.log(typeof(boolArray), boolArray) 
+	 if (typeof(boolArray) != 'boolean'){
+	 globalDisplay(`Wow! the value you used(${boolArray}) is the ONE value you can't use for NOT with truthiness, undefined!`, 'error'); 
+	 return '#ABORT#'}
+	 }
+	} console.log(!(boolArray), 'Result of NOT') 
+	return !(boolArray)},
+	RANDOM: function(randArray) {
+	 console.log(randArray)
+	 methodRunTimes++
+	 console.log(methodRunTimes, 'heregoes')
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	 let min = randArray[0]; let max = randArray[1]; let intType = randArray[2];
+     if(intType == undefined) {intType = true}	 
+	 if(typeof(max) != 'number') {
+	  if(settings.truthiness) {max = boolNum(max)[0]}
+	  else {globalDisplay('Truthiness is off, meaning you cannot use values that are not number-typed. ' + max + ' is not a number', 'error')}
+	 }
+	 if(typeof(min) != 'number') {
+	  if(settings.truthiness) {min = boolNum(min)[0]}
+	  else {globalDisplay('Truthiness is off, meaning you cannot use values that are not number-typed. ' + min + ' is not a number', 'error')}
+	 }
+	 if (Number(max) < Number(min)) {
+	  let temp = Number(min);
+	  min = Number(max);
+	  max = temp;
+	 }
+	 console.log(min, max, intType)
+	 if(typeof(intType != 'boolean')) {intType = (boolNum(intType))[0]}
+	 if (intType) {min = Math.ceil(min); max= Math.floor(max)}
+	 if (intType) { //fix all but display to work when given an array
+ 
+	 return Math.floor(Math.random() * (max-min+1) +min) //May want to switch from math.random
+	}else {return (Math.random() * (max-min) + min)}
+	},
+     REPEATUNTIL: function(untilArray) {
+         globalDisplay(untilArray + ' made it to REPEAT UNTIL', 'report')
+		 if((untilArray[1])[0] == '#') {
+            untilArray[1] = untilArray[1].split("")
+            untilArray[1].pop(); untilArray[1].shift();
+			console.log(untilArray)
+            untilArray[1] = untilArray[1].join("");
+            untilArray[1] = condArray[(untilArray[1])]
+			console.log(untilArray)
+            untilArray[1] = splitOutsideFuncAndString(untilArray[1], ',')
+			let errorMaker = 'er'
+            let valueSeen = doMath(untilArray[0], true)
+			let operationListforValue = valueSeen[1]
+			for (let i=0; i < valueSeen[0].length; i++) {
+						   if (((valueSeen[0])[i])[0] == '[' && ((valueSeen[0])[i])[(valueSeen[0])[i].length -1] == ']') {
+						    if (settings.truthiness) {
+							(valueSeen[0])[i] = 1 - (((valueSeen[0])[i]).length == 2);
+						   } else {globalDisplay('Truthiness means that whole arrays are not supported in REPEAT UNTIL because they are not numbers.', 'error')}
+						   }
+						 }
+			let storedTermList = valueSeen[0].join("\n")
+			untilArray[0] = valueSeen[0]
+			valueSeen = doMath(untilArray[0], false, operationListforValue)
+            console.log( untilArray[0], operationListforValue)
+			console.log(storedTermList)
+			//change doMath to allow just doing the pre-processing and the bit after that as well (splitting of the lists)
+             if (typeof(valueSeen) != 'boolean' && settings.truthiness == false) {
+               globalDisplay( 'Truthiness off makes your condition for REPEAT UNTIL not work at all because you picked something that is not a Boolean!', 'error')
+          return '#ABORT#'
+             } 
+                    let condTypeList = '##'
+					let storedCode = runConds(untilArray[1], condTypeList)
+					let storedTypes = JSON.stringify(storedCode[1])
+					condTypeList = storedCode[1]
+					untilArray[1] = storedCode[0]
+					storedCode = JSON.stringify(storedCode[0])
+					//@s for types because they don't appear in types and aren't commas
+					//Code because it doesn't exactly happen at all for hashtags unless conditionals are used
+					
+					console.log(untilArray[1], condTypeList)
+					console.log(storedCode, storedTypes)
+					//errorMaker.push(undefined)
+                    while (!(valueSeen)) {
+					methodRunTimes++
+	 if (methodRunTimes > 1000 && settings.getInfiniteLoopsQuick == true) {
+	   globalDisplay(`You may have created an infinite loop, because you have ran SO MANY functions in 1 program!
+	   If you have not I suggest getting rid of your catchInfiniteLoopsQuick setting turned on.`,'error')
+	   let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 } else if (methodRunTimes > 1000000) {
+	  globalDisplay(`You may have made an infinite loop.`, 'error')
+	  let err='Intentional Error by Psuedocode Runner'.push('undefined')
+	 }
+	              console.log(methodRunTimes, 'FINAL JERONA!!!')
+                  runConds(untilArray[1], condTypeList)
+				  if(returnState != null) {return returnState}
+				  //console.log((untilArray[1]).length, 'THIS MATTERS!!')
+				  untilArray[1] = JSON.parse(storedCode)
+				  condTypeList = JSON.parse(storedTypes)
+				  
+				  console.log(untilArray[1], condTypeList)
+				  console.log(storedCode, storedTypes)
+				  console.log(condArray)
+				  untilArray[0] = storedTermList.split("\n")
+                   valueSeen = doMath(untilArray[0], false, operationListforValue)
+                   if (typeof(valueSeen) != 'boolean' && settings.truthiness == false) {
+               globalDisplay( 'Truthiness off makes your condition for REPEAT UNTIL not work at all because you picked something that is not a Boolean!', 'error')
+              return '#ABORT#'
+             }
+			 //console.log(untilArray[0], operationListforValue)
+			 //errorMaker.push(undefined)
+              }
+             return undefined
+         } else {
+          globalDisplay('REPEAT UNTIL only has one parameter, the condition itself. So, any usage of commas that are not part of an array or a string are unnecessary. Parameters are separated by commas, after all.', 'error'); return '#ABORT#'
+      }
+     },
+  } //end object functions
+ 
+  
+  const settings = {
+    truthiness : true,
+    stringNumConcat : false,
+    poststringSpace : false,
+	undefinedError: false, //If true, supposed to cause an error, if false supposed to essentialy ignore the undefineds
+    DISPLAYSeperatedNewLine: true,
+    stringNumConvertTryhard: true,
+    stringFalseIsFalse:true,
+	getInfiniteLoopsQuick: true,
+	canMoveParametersString: false,
+	array: ['truthiness', 'stringNumConcat', 'poststringSpace', 'undefinedError', 'DISPLAYSeperatedNewLine', 'stringNumConvertTryhard', 'stringFalseIsFalse', 'getInfiniteLoopsQuick', 'canMoveParametersString'],
+  }
+  let settingsStored 
+  if (canStore) {
+  settingsStored = localStorage.getItem('settings')
+  if (settingsStored != undefined && settingsStored != null) {
+    settingsStored = JSON.parse(settingsStored)
+	for (let i=0; i < settings.array.length; i++) {
+	 settings[(settingsStored.array[i])] = settingsStored[(settingsStored.array[i])]
+	 //sets the value of the settings object of each property stored in the settings object
+	 //to the value it was also stored with
+	}
+  }}
+  
+  //Note: if this goes bad, remove these four lines
+  for (let i=0; i < settings.array.length; i++) {
+  let settingsArray = settings.array
+  settingsArray = settingsArray[i]
+   let settingsEditing = document.getElementById('settings' + (i+1) ); //NPLZ
+   settingsEditing.innerText = settingsArray + ': ' + settings[settingsArray]
+   }
+   //end remove
+    function setSettingsValues(id, value) {
+	  let currentValue;
+	  let settingsEditing = document.getElementById(id)
+	  let propertyToChange = (settingsEditing.innerText).split(": ")
+	  currentValue = propertyToChange[1];
+	  if (typeof(currentValue) != 'boolean') {currentValue = convertNumbers(currentValue)}
+	  propertyToChange = propertyToChange[0]
+	  if (value == '#nval#') {value = !(currentValue)}
+	  settings[propertyToChange] = value
+	  settingsEditing.innerText = propertyToChange + ': ' + value
+	  if (canStore) {localStorage.setItem('settings', JSON.stringify(settings))}
+	  console.log(settings)
+	}
+  let valueAssigned$$ = '' //This is due to a bug, the $$ is there to try to prevent accidental double-use
+  
+  //starts the program
+  function Justice(text, suspect, index) {
+   let justice =  text.substring(index, index+ suspect.length)
+   console.log(justice)
+    return(justice == suspect)
+  }
+  const justRegex = /ELSE|PROCEDURE|FOREACH|TIMES|\uF8FC/
+  function variableInvestigation(crimeScene) {
+    let variableName = ''; let evidence;
+	for (let i=0; i < crimeScene.length; i++) {
+	  evidence = crimeScene[i]
+	  variableName = ''
+	  Ahoy: for (let j=0; j < evidence.length; j++) {
+	    if (evidence[j] == '←') {break Ahoy}
+		variableName += evidence[j];
+	  }
+	  //New idea: Quicksort your variable name, and then 
+	  if (variableName === evidence) { variableName = ''}
+	  console.log(variableName)
+	  for (let j=0; j < variableName.length; j++) {
+	    if (justRegex.test(variableName)) {
+		   globalDisplay(`Your variable, ${variableName} cannot contain any of the following words: IN (without spaces surrounding it), ELSE, TIMES, FOREACH, or PROCEDURE. It appears to have contained at least one of these.`, 'error')	  
+		}
+	  }
+	}
+    console.log('Not a crimenell, eh? We\'ll just have to see about that! See you soon, criminells! Unless, am I the crimiknell?')
+  }
+  
+  function stepsOrder() {
+  globalDisplay('Program began. Running other functions...', 'report')
+  
+  /*HEY! YOU! YES YOU! YOU NEED TO REPROGRAM THESE FOR LOOPS TO BE MORE DYNAMIC OR 
+  EDIT THE LINED STRING ADDING NEW LINES WHEN FUNCTIONS ARE CALLED! PREFERABLY,
+  THE SECOND ONE. YOU ALSO NEED TO CREATE LOCAL VARIABLE/GLOBAL VARIABLE DISTINCTION */
+  formatLines()
+  console.log(linedString)
+  //return 0
+  //wordsString is kinda GONE ngl
+  variableInvestigation(linedString);
+  linedString = seperateConds(linedString);
+  //return 0
+  //console.log('huh?')
+  if (linedString == '#ABORT#') {return 0}
+  globalDisplay(linedString, 'report');
+  //Ordinary line running start
+   for (let i = 0; i < linedString.length; i++) {
+   typesList[i] = []
+   valueList[i] = assignType(linedString[i], typesList[i])
+   if (valueList[i] == '#ABORT#') {return 0}
+   typesList[i]= (valueList[i])[1];
+   valueList[i] = (valueList[i])[0];
+  }
+  console.log(valueList); console.log(typesList);
+  //return 0
+  //let errorMaker = 'I made an error'; errorMaker.push(undefined)
+    for (let i=0; i < linedString.length; i++) {
+	if (timesNested != 0) {timesNested--;}
+	if (elseCondition[0] != 0 ) {elseCondition[0]--;}
+	if ((typesList[i])[0] == '<-') {
+    let dontAbort = manageVariables(valueList[i], typesList[i], 'global')
+	if (dontAbort == '#ABORT#') {return 0}
+	} else {
+	//Branching paths
+	let dontAbort = simplifytoValue(valueList[i], typesList[i]) 
+	if (dontAbort == '#ABORT#'){return 0}}
+	 //let errorMaker = 'I made an error'; errorMaker.push(undefined)
+	}
+	//ordinary line-running end
+  } //end functi0n stepsOrder
+  
+  function runConds (cond, condTypeList = '##') {
+   timesNested++
+   let currentNestedLevel = timesNested
+    if (condTypeList == '##') {
+    condTypeList = []
+    console.log(cond, condArray)
+    cond = seperateConds(cond);
+	console.log(cond,condArray)
+	//let err= 'failed'.push(undefined)
+	let condV = []
+	if (cond=='#ABORT#') {return '#ABORT#'}
+	for (let i=0; i < cond.length; i++) {
+	  condTypeList[i] = [];
+	  condV[i] = assignType(cond[i], condTypeList[i]);
+	  if (condV[i] == '#ABORT#') {return '#ABORT#'}
+	  condTypeList[i] = (condV[i])[1];
+	  condV[i] = (condV[i])[0];
+	}
+	cond = condV; console.log(cond); console.log(condTypeList)
+	let result = [cond, condTypeList]
+		  console.log(result); return result
+	}
+		  
+		  let dontAbort
+	for (let i=0; i < cond.length; i++) {
+	if (timesNested != currentNestedLevel) {timesNested--; elseCondition[timesNested+1] = undefined}
+	if (elseCondition[timesNested] != 0 && elseCondition[timesNested] != undefined) 
+	{elseCondition[timesNested]--;}
+	if ((condTypeList[i])[0] == '<-') {
+    dontAbort = manageVariables(cond[i], condTypeList[i], 'global')
+	if (dontAbort == '#ABORT#') {return dontAbort}
+	} else {
+	//Branching paths
+	dontAbort = simplifytoValue(cond[i], condTypeList[i]) 
+	if (dontAbort == '#ABORT#'){return dontAbort}}
+	  console.log(cond); console.log(varList, varValueList)
+	  if (returnState != null) {return returnState}
+  }} //end runConds (update with stepsOrder when necesary)
+  function markStringSwaps(string, returnMode = 'boolean') {
+  let stringResult = []
+  let booleanResult = []
+  let booleanThing = false
+  let theCharChar = string.split("")
+  for (let i =0; i < theCharChar.length; i++) {
+    if (theCharChar[i] == '"') {
+      if (returnMode == 'RLE' && stringResult[0] != undefined) {
+        stringResult.push(i-(stringResult[stringResult.length-1]))
+      } else {
+        stringResult.push(i) 
+      } 
+      booleanThing = !(booleanThing)
+      if (returnMode == 'string') {
+        booleanResult.push(booleanThing)
+      } 
+    }
+    if (returnMode != 'string') {
+     booleanResult.push(booleanThing) 
+    }
+  }
+     if (returnMode == 'string' || returnMode == 'RLE') {
+    return stringResult 
+  } else if (returnMode == 'boolean') {
+    return booleanResult
+  } else {
+    return [stringResult, booleanResult]
+  }
+}
+
+function deleteBadSpaces(string) {
+  let listCharred = string.split(""); 
+  string = ''
+  let indexOfStart = 0; let indexOfEnd = -10; let isItInAString
+  const array = '""' 
+  const arrayString = array.split("")
+  const rightQuote = arrayString[1]
+  const leftQuote =arrayString[0]
+ for (let i=0; i < listCharred.length; i++) {
+      if (listCharred[i] == '"') {
+        if (indexOfStart == 2000) {
+          indexOfStart = indexOfEnd -1
+        } else {
+           indexOfStart = i 
+        }
+        if (indexOfStart == indexOfEnd) {
+          indexOfStart = 2000 //between strings, I think
+        }
+        indexOfEnd = listCharred.indexOf(rightQuote, i+1)
+        if (indexOfEnd == -1) {
+          indexOfEnd = listCharred.length + 20
+        }
+      }
+      if (indexOfEnd - indexOfStart > 0) {
+        isItInAString = true
+      } else {
+        isItInAString = false
+      }
+      if ((listCharred[i] != " " || (isItInAString)) && listCharred[i] != undefined) {
+        string = string + listCharred[i]
+      }
+    }
+  return (string)
+}
+  function formatLines() {
+   /*This function takes raw, line-labeled code and outputs a string with all the characters (excluding non-string spaces) and an array contains all words (useful to check the length of operations) */
+   //Need to use a more advanced version of split that I make to
+   //eliminate all of the code issues I have when talking about        //"Line"
+   let impInitString = initString + ' Line _: end bounder'
+   let initSeenQuote = false; let initSeenHash = false
+   let initCharString = []
+   let initWordString = impInitString.split(" ")
+   //make a new function soon
+   let oneWord = ''
+   let singleLine = ''
+   for (let i =1; i < initWordString.length; i++){
+     oneWord = initWordString[i]
+     initCharString = initWordString[i].split("") //cuts chars
+     
+     for (let i = 0; i < initCharString.length; i++) {
+       if (initCharString[i] == '"') { //left quote starts string
+        initSeenQuote = !(initSeenQuote)
+       }
+	   if (initCharString[i] == '#') {
+	    initSeenHash = !(initSeenHash)
+	   }
+     }
+     if (oneWord == "Line" && !(initSeenQuote) && !(initSeenHash)) {
+       linedString.push(singleLine)
+            singleLine = ''
+     } else {
+        singleLine = singleLine +' ' + initWordString[i]
+     }
+   }
+   //linedString = initString.split("Line ") REPLACE
+   //linedString.shift()
+   //Removes first one which is always empty
+   let restrungLine1
+   let char_edString
+   let quoteAmount
+   let lineString
+   let Length
+   let hasSeenQuote
+   let wordString= []; let impChar_edString
+   let singleSentence; let pushMan = ''
+   let binaryParenth = 0; let binaryQuote = false
+   let reportingString = linedString
+   let letterOperatorNum =0
+   if (1) {
+     for (let i= 0; i < linedString.length; i++) {
+	 letterOperatorNum = 0
+     lineString = ''
+	 wordString = []
+     restrungLine1 = linedString[i]
+     restrungLine1 = splitGoodChar(restrungLine1, ":")
+     linedString[i] = restrungLine1[1]
+     restrungLine1 = linedString[i]
+     char_edString = restrungLine1.split("")
+	 hasSeenQuote = false
+	 for (let i=0; i < char_edString.length;i++) {
+	  //quote thing to check if in string when see AND
+	  if (char_edString[i] == '"') {
+	  hasSeenQuote = !(hasSeenQuote)
+	  }
+	  if (hasSeenQuote == false) {
+	  if (char_edString[i] == 'A' && char_edString[i+1] == 'N' && char_edString[i+2] == 'D') {
+	   letterOperatorNum = 1
+	  } else if (char_edString[i] == 'M' && char_edString[i+1] == 'O' && char_edString[i+2] == 'D') {
+	   letterOperatorNum = 2
+	  } else if (char_edString[i] == 'O' && char_edString[i+1] == 'R') {
+	   letterOperatorNum = 3
+	  } else if (char_edString[i] == 'I' && char_edString[i+1] == 'N') {
+	   letterOperatorNum = 4
+	  }}
+	  if (letterOperatorNum != 0) {
+	   //console.log(letterOperatorNum, i, i-1, i+2+ +(letterOperatorNum != 3))
+	    if ((isDigitString(char_edString[i-1]) || char_edString[i-1] == '"' || char_edString[i-1] == ' ') && (isDigitString(char_edString[i+2+ +(letterOperatorNum <= 2)]) || char_edString[i+2+ +(letterOperatorNum <= 2)] == '"' || char_edString[i+2+ +(letterOperatorNum <= 2)] == ' ')) {
+		 //console.log(letterOperatorNum, i, i-1, i+2+ +(letterOperatorNum != 3))
+		 if (letterOperatorNum == 1) {
+		  char_edString[i] = '\uF8FE'
+		 } else if (letterOperatorNum == 2) {
+		   char_edString[i] = '\uF8FF'
+		 } else if (letterOperatorNum == 3){
+		  char_edString[i] = '\uF8FD'
+		 } else if (letterOperatorNum == 4){
+		  char_edString[i] = '\uF8FC'
+		 }
+		 char_edString = superShift(char_edString, i+1)
+		 if (letterOperatorNum <= 2) {char_edString = superShift(char_edString, i+1)}
+		}
+	    letterOperatorNum = 0
+	  }
+	  
+	 }
+	 //console.log(char_edString)
+	 
+	 restrungLine1 = char_edString.join('')
+     restrungLine1 = deleteBadSpaces(restrungLine1)
+      //console.log(restrungLine1, 'final')
+	  let hashtagBinary = false; let quoteBiNN = false; let newCharThing = ''
+	  for (let i=0; i < restrungLine1.length; i++) {
+	   if (restrungLine1[i] == '#') {
+	    hashtagBinary = !(hashtagBinary)
+	   }
+	   if (restrungLine1[i] == '"') {
+	    quoteBiNN = !(quoteBiNN)
+	   }
+	   if (hashtagBinary && !(quoteBiNN)) {
+	   //Nothing happens if we are outside a string and between two hashtags
+	   } else {
+	    if (restrungLine1[i] == '#' && !(quoteBiNN)) {} else {
+	    newCharThing += restrungLine1[i] 
+		}
+	   }
+	  }
+	  restrungLine1 = newCharThing
+      linedString[i] = restrungLine1
+     }
+   }
+   //end all loops, ending bit here
+ } //end functi0n formatLines
+function assignType(result, typeList) {
+    console.log(result, typeList)
+	let newList = [];
+    if (Array.isArray(typeList) == false) {typeList = []}
+     //Make this work for each word and value inside the parentheses
+         //'DISPLAY(10,"Howdy everyone" + "Welcome to Um Actually",20+1,) +   DISPLAY(12))'
+     let words = ''; let pushManMan = ''; let binary = false; valueAssigned$$ = ''
+      John: for (let i =0; i < result.length; i++) {
+        if (result[i] == '"') {
+          binary = !(binary)
+        }
+        //console.log(i, result[i], result[i+1])
+        if ((result[i+1] == '-' && result[i] == '<' || result[i] == '←') && valueAssigned$$ == '' && binary == false) {
+           valueAssigned$$ = pushManMan
+		   if (isProhibitedTerm(pushManMan))
+		   { globalDisplay(`The value you assigned, ${pushManMan}, seems to be a prohibited word.
+		   You should not do that anymore. The prohibited list is as follows: ${bannedWords.join("\n")}`, 'error'); return 0
+		   }
+          if (result[i] == '<') {
+            result = result.replace(pushManMan, "") //This replaces the whole value with a space
+          result = result.replace('<-', "") 
+          } else {
+            result= result.replace(pushManMan, "")
+            result = result.replace('←',"")
+          }
+           result = result.trimStart() //This destroyes the space
+          console.log(result, 'end result');
+          break John
+        } else {
+          pushManMan += result[i]
+        }
+      } // end for dealing with assigns
+       let char_edString = result.split(""); let parenthCount = 0; let lastParenthCount = 0; pushManMan= ''; let parenthBroken = []; let parenthCount2 = 0; let biN = false;
+       let bracketNumber = 0
+	   for (let iw=0; iw < char_edString.length; iw++) {
+         //console.log(iw, 'incrementor ', char_edString.length, biN)
+         if (char_edString[iw] == '"') { biN = !(biN)} 
+		 if (char_edString[iw] == '[') {bracketNumber++}
+		 if (char_edString[iw] == ']') {bracketNumber--}
+		 if (bracketNumber < 0 || bracketNumber > 1) {
+		 globalDisplay('Too many brackets. Each bracket opens what it closes. You cannot have arrays nested inside other arrays in this language. I know they\'re quite useful, but I don\'t think you need them right now. If you want to bridge to Javascript just because of this error, sorry. Hunt for the double brackets in your code. Best of luck, see you again soon!', 'error')
+		 }
+         if (biN == false && bracketNumber == 0) {
+         //add string exception case
+         lastParenthCount = parenthCount
+         if (char_edString[iw] == ')') {
+           if (parenthCount2 > 0 && parenthCount == 0) {
+             parenthCount++; parenthCount2-- //This should further assist in the ignoring of numerical parentheses
+           }
+           parenthCount--
+         }
+         if (char_edString[iw] == '(') {
+           parenthCount++
+         }
+        //console.log(parenthCount, lastParenthCount)
+         if ((parenthCount == 0 || lastParenthCount == 0) && (parenthCount > 0 || lastParenthCount > 0)) { //greater than zero so that negative numbers can be used
+           if (parenthCount > 0 ) {
+           if ((pushManMan[1+ linearSearchList(pushManMan, mathOperators)]) != undefined) {
+             parenthBroken.push(pushManMan) 
+             console.log(parenthBroken, pushManMan)
+             pushManMan = ''
+           } else {
+             pushManMan += char_edString[iw]
+             parenthCount-- ; parenthCount2++
+             //This should make it so that a numerical expression is kept as-is
+           }
+           //console.log('Phew! That math was intense! ' + iw + ' ' + char_edString.length)
+          } else {
+             parenthBroken.push(pushManMan)
+             pushManMan = ''
+           }
+           //This should only happen when one of them is not 0 and another is, or in other words the uppermost left and right parentheses
+         } else {
+           pushManMan += char_edString[iw]
+           if (iw == char_edString.length-1) {
+		    //All the leftover bits go here. Meaning that this can't be a function
+             //console.log(parenthBroken, 'about to push it');
+             parenthBroken.push('')
+			 parenthBroken.push(pushManMan)
+             console.log('WE PUSHED IT! WOO!', pushManMan, parenthBroken)
+             pushManMan = ''
+           }
+         }
+       }else {pushManMan += char_edString[iw]}}//end for finding values inside parentheses and grouping them
+   console.log('out of for loop ', parenthBroken);
+      Stacy: for (let i=0; i < parenthBroken.length; i++) {
+        //Do something here to make it so that parenthBroken[i] values that contain no operations or parentheses outside strings just pass through and change the value of the result for i MOD 2
+        let weewoo = false
+		if (parenthBroken.length == 1) {weewoo = true}
+        if (i % 2 == 0 && !(weewoo)) {
+          console.log(parenthBroken[i], 'This is the value')
+          if (findFunction(parenthBroken[i], 'bool', parenthBroken[i+1]) == true) {
+            typeList[i] = '#EM#' //This is an empty string
+            typeList[i+1] = parenthBroken[i]
+            parenthBroken[i] = ''
+          } else {
+            typeList[i] = parenthBroken[i]
+            let push= ''; let I = 0//COME BACK AFTER MAKING isFunction
+          let tacoTownString = parenthBroken[i].split(""); 
+            const tacoIndex = linearSearchList(tacoTownString, mathOperators)
+            if (tacoIndex != -1) {
+              console.log('Operation found!')
+               while ( I <= tacoIndex ){
+                push += tacoTownString[I]
+              tacoTownString[I] = ''
+              I++
+               console.log(I, i)
+               } I=0 //this is intended to add all mathematical expressions 
+            } else {
+            }
+          //end for
+            tacoTownString=tacoTownString.join("")
+            parenthBroken[i] = push; push = ''
+            if (findFunction(tacoTownString, 'bool', parenthBroken[i+1]) == true) {
+            typeList[i] = undefined; //2
+            typeList[i+1] = tacoTownString
+            tacoTownString = ''
+          } else {
+            console.log(tacoTownString, 'No function found');
+            typeList[i] = '#FN#'; //Non-function
+            push = parenthBroken[i]
+          }
+           if (parenthBroken[i] == '#') {parenthBroken[i] = ''}
+            //parenthBroken[i] = push
+         } //end if automatically found
+         if (parenthBroken[i] == '') { typeList[i] = '#EM#'}
+		} //end if it's even, meaning that it's the function call
+      } //end for parentbBroken
+	   console.log(parenthBroken, typeList)
+      if (parenthBroken != '') {
+      newList = parenthBroken
+      }else { //This only happens if there are no function calls
+        newList[0] = result
+      }
+       if (valueAssigned$$ != '') {
+          newList.unshift(valueAssigned$$);
+         typeList.unshift("<-")
+       }
+      for (let i=0; i < newList.length; i++) {
+        if (typeList[i] == undefined) {
+		   if (linearSearchList(newList[i], mathMinusBrackets, true) != -1) {
+             typeList[i] = '#EX#' //Stands for expression, arrays are handled inside of convertNumbers so no marking needed
+           } else {
+             typeList[i] = '#EV#' //Stands for value
+           }
+        }
+		if (typeList[i] == '#EM#') {typeList = superShift(typeList, i); 
+		newList = superShift(newList, i); i--; }
+      }
+	  console.log(newList, typeList)
+	  return [newList, typeList]
+      /*result = splitGoodChar(result,')')
+      console.log(result)
+     result = result.join('(')
+      console.log(result)
+     console.log(splitGoodChar(result, '('))
+     let hasSeenQuote = false */
+      
+   } //end function
+
+function manageVariables(value, type, method = 'global') {
+   //add part for replacing in doMath
+   if (type[0] == '<-') {
+      if (typeof(convertNumbers(value[0], false, false)) == 'string' && value[0].split('"') == value[0] && findFunction(value[0]) == -1 && linearSearchList(value[0], mathMinusBrackets) == -1 &&(value[0])[0] != '0' && (value[0])[0] != '1'&& (value[0])[0] != '2'&& (value[0])[0] != '3'&& (value[0])[0] != '4'&& (value[0])[0] != '5'&& (value[0])[0] != '6'&& (value[0])[0] != '7'&& (value[0])[0] != '8'&& (value[0])[0] != '9' && (value[0])[0] != '['&&!(!(settings.canMoveParametersString) && (value[0] == 'forward' || value[0] == 'backward' || value[0] == 'left' || value[0] == 'right'))) {
+	   //above supposed to check if a value that's getting assigned is a number or a string
+	   let oldVarList = varList
+	   let leftBracketIndex = linearSearchOutsideString(value[0],'[')
+	   let rightBracketIndex = linearSearchOutsideString(value[0], ']')
+	    if (rightBracketIndex != -1 && leftBracketIndex != -1) {
+		 if (rightBracketIndex < leftBracketIndex && leftBracketIndex != 0) {
+		  globalDisplay(`It appears that you declared your array terms incorrectly. Declare them with the variable you want the term to be on in the left, 
+		  a [, and then the index you want, and then a ].
+		  For example x[1] is correct syntax, but ]1[x is not. Also assigning anything to a whole array is not a very good idea.`)
+		 }
+		  let bracketsAssigned = value[0].substring(leftBracketIndex+1, rightBracketIndex)
+		  if (linearSearchOutsideString(bracketsAssigned, mathOperators) != -1) {
+		   bracketsAssigned = doMath(bracketsAssigned)
+		   bracketsAssigned == '#ER-EMDAS#' || globalDisplay('Math is not mathing (function calls not supported inside brackets btw)')
+		  //Again, OR used to potentially save performance??
+		  } else {bracketsAssigned = convertNumbers(bracketsAssigned)}
+		  typeof(bracketsAssigned) == 'number' || globalDisplay('Value invalid as index. Use a number instead', 'error')
+		  value[0] = value[0].substring(0, leftBracketIndex)
+		  console.log(value[0], varList, varValueList)
+		  let indexOfArray = binarySearch(value[0],varList)
+		  if (Array.isArray(varValueList[indexOfArray])) {
+		   console.log(indexOfArray, varValueList[indexOfArray])
+		   if (!(bracketsAssigned > (varValueList[indexOfArray]).length) && !(bracketsAssigned < 1)) {
+		   //console.log('Hey guys! We made it!');
+		   (varValueList[indexOfArray])[bracketsAssigned-1] = convertNumbers(simplifytoValue(value, type, 1));
+		   console.log(varList, varValueList);
+		   return undefined
+		   //We convert to 1-based indexing in our arrays by subtracting 1 from them.
+		   } globalDisplay(`Index ${bracketsAssigned} does not fit inside the array.`, 'error')
+		  } else {
+		   globalDisplay(`Soo... the variable that you tried to assign an index with a given value to didn't exactly exsist in array form.
+		   You have to declare it's an array before you add a bracket to it! Or maybe that variable didn't exsist, who knows? Not this guy!
+		   But, if you find out what it is in your code, you can know. Best of luck!`,'error')
+		  }
+		  /*This code begins by finding if this has brackets, and the brackets 
+		  are arranged correctly. If no brackets, ignored, if brackets wrong way ERR.
+		  And then, we find the value inside the brackets, and the variable before that.
+		  We check if the value inside the brackets is an array we have stored, and then we
+		  check if the bracketed number is greater than the length of the array or smaller
+		  than 1. If all of those checks result in something valid, we send the rest of the line
+		  to simplifytoValue and when it's done, set the value of the corresponding index of the corresponding array.*/
+		  console.log(value[0], bracketsAssigned, varValueList)
+		  return undefined
+		}
+	   varList = addTermtoSorted(varList, value[0], varValueList)
+	   console.log(varList)
+	   let indexFound = varList[1]; varValueList = varList[2]; varList = varList[0];
+          console.log(value, type)	   
+	   let valueofAssigned = simplifytoValue(value, type, 1)
+	   if (valueofAssigned == '#ABORT#') {varList = oldVarList; 
+	   varValueList = superShift(varValueList, indexFound); return '#ABORT#'}
+	   varValueList[indexFound] = convertNumbers(valueofAssigned)
+	   console.log(varList, varValueList)
+	  } else {
+	   globalDisplay(`${value[0]} is not a valid thing to assign. If you're new at this, then you might not know that the things we assign as variables
+	   are not values like 67 or strings like "Skibidi Rizz", or functions like DISPLAY("Emotional Damage!") (or even DISPLAY). 
+	   We assign variables to letters without quotes around them like all the ones that are making 
+	   up this message (at least, visually, to you). Please remember that and fix it.
+	   We cannot assign things that start with numbers, or contain mathematical symbols (excluding AND, OR, and MOD)
+	   Side note: AND, OR, and MOD (and also IN) must be seperated with spaces when you are using them with variables. x AND y is good, 
+	   2 AND 4 is good, 2AND4 is good, but xANDy is bad. Capiche?
+	   Also, funny story...
+	    In page 7 of the AP Computer Science Principles Exam Refrence Information (psuedocode guide which this website is based off of), the description for CAN_MOVE includes the line "the value of (the parameter allowed into CAN_MOVE) can be left, right, forward or backward." If taken literally, this implies that the literal text (NOT A STRING) is passed in as a parameter. That is a very bad idea because variables named left,right,forward, or backward could  mess up the code. Which, if you are getting this error, is EXACTLY what happened. \n There is a setting that exsists called canMoveParametersString in the settings. Turning it off fixes this bug, but it will require to to use "forward", "backward", "left", and "right" with quotes surrounding them instead of like you previously have.
+	   
+	   If you're not new... STOP TROLLING! DO YOU KNOW HOW FOOLPROOF PEOPLE HAVE TO MAKE THEIR CODE 
+	   BECAUSE OF PEOPLE LIKE YOU!!`, 'error'); return 0
+	   	  } //end yelling at them for assigning a variable to the wrong thing
+   } //end if assigning
+} //end func
+
+function simplifytoValue (value, type, startPoint = 0, doFinalMath = true ) {
+for (let i=startPoint; i< type.length; i++) {
+          console.log(value, type)
+	     if ((type[i])[0] != '#') {
+		 // above checks for a function because the first character in all other types is a #
+		   value[i] = callFunctions(value[i], type[i])
+		   if (value[i] == '#ABORT#') {return '#ABORT#'}
+		   if (returnState != null) {return returnState}
+		   if (value[i] === undefined) {value[i] = 'undefined'}
+		   value[i] = Stringify(value[i])
+		   console.log(value[i])
+		   let resultHandler = assignType(value[i], [])
+		   console.log(resultHandler)
+		   //value = superShift(value, i-1); type= superShift(type, i-1)
+		   value[i] = resultHandler[0].join(""); 
+		   type[i] = resultHandler[1].join("")
+		   console.log(value[i], value, type);
+		   //'fail'.push()
+		   //Above was turning the value to and from an array so we can be 100% sure assignType works on it
+		 } else if (type[i] == '#FN#') {
+		   globalDisplay(`The function you have used does not exist in our list. Declare a function
+		   with PROCEDURE followed by the function name, followed by the parameters surrounded in parentheses
+		   and then the contents of the function surrounded by the curly braces { and }`, 'error')
+		   return 0
+		 }
+	   }
+	   //Why would 2 values ever need to be joined? 
+	   //Also why is a full assignType call necesary?
+	   for (let i=startPoint+1; i < type.length; i++) {
+	    if (type[i] == '#EV#' || type[i] == '#EX#') {
+		  if (type[i-1] == '#EX#'|| (type[i-1] == '#EV#' && type[i] != '#EV#')) {
+		   value[i-1] = value[i-1].concat(value[i])
+		   //Purpose of this is to add individual values to expressions that likely originate as a result of functions
+		   value= superShift(value, i)
+		   type = superShift(type, i); i-- //SEE IF THIS IS NEEDED
+		   type[i] = '#EX#' //if the second is an expression and the first is a value
+		   // the expression is overwritten despite actually being an expression now
+		  }
+		}
+		//Try to bug test this with functions at some point
+	   }
+	   console.log(value, type)
+               if (doFinalMath) {
+                
+	   for (let i= startPoint; i < type.length+1; i++) {
+		if (type[i] == '#EX#') {
+		  let valueBeforeMath = value[i]
+		  value[i] = doMath(value[i])
+		  if ((value[i]) == '#ER-EMDAS#') {
+		    globalDisplay(`It appears you broke the rules of math? ${valueBeforeMath} is not
+			a valid mathematical expression. That's an error!`, 'error')
+			return '#ABORT#'
+		  }
+		  type[i] = '#EV#'
+		}
+	   }}
+	return value[startPoint]
+}
+
+function callFunctions (term, func) {
+if (func == 'PROCEDURE') {return undefined}
+if(returnState != null) {return returnState}
+   console.log(func + '(' + term + ')')
+   //return '#ABORT#'
+   term = splitOutsideFuncAndString(term, ',',)
+   let typeforTerm = []; let resultHandler;
+   for (let i=0; i < term.length; i++) {
+    typeforTerm[i] = []
+    resultHandler= assignType(term[i], typeforTerm[i]) //PLZ
+   term[i] = resultHandler[0]; typeforTerm[i] = resultHandler[1];
+   }
+   console.log(term, func, typeforTerm)
+   //return '#ABORT#'
+ let repeatBoolean = !(func == 'REPEAT' || func == 'REPEATUNTIL' || func == 'FOREACH')
+ let IARBool = (func == 'INSERT' || func == 'APPEND' || func == 'REMOVE')
+    //console.log(repeatBoolean);
+   for (let i=0; i < term.length; i++) {
+    term[i] = simplifytoValue(term[i], typeforTerm[i], 0, repeatBoolean)
+	if (!(settings.canMoveParametersString) && (term[i] == 'forward' || term[i] == 'backward' || term[i] == 'left' || term[i] == 'right') && func != 'CAN_MOVE' ) {
+	 globalDisplay('So, funny story. In page 7 of the AP Computer Science Principles Exam Refrence Information (psuedocode guide which this website is based off of), the description for CAN_MOVE includes the line "the value of (the parameter allowed into CAN_MOVE) can be left, right, forward or backward." If taken literally, this implies that the literal text (NOT A STRING) is passed in as a parameter. That is a very bad idea because variables named left,right,forward, or backward could  mess up the code. Which, if you are getting this error, is EXACTLY what happened. \n There is a setting that exsists called canMoveParametersString in the settings. Turning it off fixes this bug, but it will require to to use "forward", "backward", "left", and "right" with quotes surrounding them instead of like you previously have. ','error')
+	}
+	if(repeatBoolean && !(IARBool && i == 0)) {term[i] = term[i].toString(); term[i]= convertNumbers(term[i]);}
+	typeforTerm[i] = '#EV#'
+   }
+   //above creates a recursive structure that allows others to be seen
+   let funcID = findFunction(func); let isJS;
+   if (functionListCSP[funcID] == func) {
+    isJS = false
+   } else if (functionListJS[funcID] == func){ isJS = true
+   } else { globalDisplay("Function not found I guess", 'error'); return 0}
+   if (isJS) {
+     term = functions[func](term)
+   //enable bracket ignoring for commas inside splitOutsideFuncAndString
+   } else {
+     //Save the previous position inside the procedure if necesary
+     let procUsedCode = condArray[(procedureData[funcID])[0]]
+	 procUsedCode = splitOutsideFuncAndString(procUsedCode, ',')
+	 let indexesOfParameters = []
+	 valueNester[insideProcedure] = []
+	 for (let i=1; i < procedureData[funcID].length; i++) {
+	   varList = addTermtoSorted(varList, (procedureData[funcID])[i],varValueList)
+	   indexesOfParameters[i-1] = varList[1]
+	   varValueList = varList[2];
+       valueNester[insideProcedure].push((procedureData[funcID])[i]) 
+	   valueNester[insideProcedure].push(term[i-1])  	   
+	   varValueList[varList[1]] = term[i-1]
+	   varList = varList[0];
+	 }
+	 let procTypeList = '##';
+	 procUsedCode = runConds(procUsedCode, procTypeList)
+	 procTypeList = procUsedCode[1]; procUsedCode = procUsedCode[0]
+	 insideProcedure++
+	 //Game plan: If insideProcedure is not 0, decrement 1 from it every time you pass
+	 //through runConds and returnState is set to a value.
+	 runConds(procUsedCode, procTypeList)
+	 insideProcedure--
+	 if (returnState != null) {
+	  if (insideProcedure != 0) {
+	  console.log(valueNester, term, returnState)
+	  for (let i =0; i < valueNester[insideProcedure-1].length; i= i+2) {
+	   varList = addTermtoSorted(varList, (valueNester[insideProcedure-1])[i], varValueList)
+	   varValueList = varList[2]; varValueList[varList[1]] = (valueNester[insideProcedure-1])[i+1]
+	   varList = varList[0]
+	  }
+	  valueNester[insideProcedure-1].length = 0;
+	  console.log(varList, varValueList, valueNester)
+	  let temp = returnState; returnState = null; return temp}
+	  } 
+	 if (insideProcedure == 0) {console.log(`End of the procedure with value being ${returnState}`)
+      valueNester = []; let indexOfParameter;
+	  //console.log(varList,varValueList)
+	  for (let i=1; i < procedureData[funcID].length; i++) {
+	    indexOfParameter = binarySearch((procedureData[funcID])[i], varList)
+		varList = superShift(varList, indexOfParameter)
+		varValueList = superShift(varValueList, indexOfParameter)
+	  }	  
+	  console.log(varList,varValueList)
+	 //Get rid of the parameters here. We do not need them. Also kill valueNester
+	 let temp = returnState; returnState = null; return temp}
+	 console.log(varList, varValueList, indexesOfParameters)
+	 console.log(procUsedCode, procTypeList, term)
+   }
+   console.log(term)
+   return term
+}
+
+function isProhibitedTerm (value) {
+ for (let i=0; i < bannedWords.length; i++) {
+  if (value == bannedWords[i]) {return true}
+ }
+ return false
+}
+function linearSearchList (searchedThrough, finding, ignoreInsideBrackets = false) {
+//ONLY WORKS IF FINDING IS AN ARRAY CONATINING ONLY ONE CHARACTER STRINGS
+  let indexofMath = -1; let bracket = 0; let quote = true
+  for (let i=0; i < searchedThrough.length; i++) {
+     if (ignoreInsideBrackets) {
+	 if (searchedThrough[i] == '"') {quote = !(quote)}
+      bracket = bracket + (searchedThrough[i] == '[' && quote);
+	 bracket= bracket - (searchedThrough[i] == ']' && quote);
+	  (bracket < 0 && bracket > 1) && globalDisplay('You cannot have arrays in arrays, and the left opening bracket must have a right closing bracket.', 'error');
+    }
+	for (let j=0; j < finding.length; j++) {
+	 if (searchedThrough[i] == finding[j] && bracket == 0) {
+	   indexofMath = i
+	   console.log(finding[j] + ' found at index '+ i + 'of' + searchedThrough)
+	 }
+	}
+  }
+  return indexofMath
+}
+ function isDigitString(char) {
+  if (char == '0' || char == '1' || char == '2' || char == '3' || char == '4' || char == '5' || char =='6' || char == '7' || char == '8' || char == '9') {
+   return true
+  } else {
+  return false
+  }
+ }
+function splitOutsideFuncAndString(term, char, cutEnds = false, excludeInBrackets = true) {
+  let array = term.split(""); let quote = false; let parenth = 0; let PUSHUPS = ''
+  let newText = []; let OneB4End = array.length-1-cutEnds; let bracket = true 
+   console.log('Split Outside Func and String called!', excludeInBrackets, cutEnds)
+  for(let i =0+cutEnds; i < array.length-cutEnds; i++) {
+     if (array[i] == '"') {quote = !(quote)}
+     if (array[i] == '(') {parenth++}
+    if (array[i] == ')') {parenth--}
+	if ((array[i] == '[' || array[i] == ']') && excludeInBrackets) {bracket = !(bracket)}
+     if (array[i] == char && parenth ==0 && quote == false && bracket) {
+       newText.push(PUSHUPS)
+       PUSHUPS = ''
+     } else if (i == OneB4End) {
+      PUSHUPS += array[i];
+      newText.push(PUSHUPS)
+     }else {PUSHUPS += array[i]}
+  }
+  for (let i =0; i < newText.length; i++) {
+  newText[i] = newText[i].trim()
+  }
+  return newText
+}
+
+ function splitGoodChar(string, character) {
+    let char_ed_edString; 
+     let array = []
+	  let pushing = ''
+	  char_ed_edString = (string).split("")
+	  char_ed_edString.push('@'); 
+	  let binary = false; let obfuscator;
+	  for (let i=0; i < char_ed_edString.length; i++) {
+	   obfuscator = char_ed_edString[i]
+	    if (obfuscator == '"') {
+		  binary = !(binary)
+		}
+		if (i == char_ed_edString.length -1) {
+		  array.push(pushing)
+		  pushing = ''
+		} else if (obfuscator == character) {
+		   if (binary) {
+		    pushing = pushing + obfuscator
+		   } else {
+		     array.push(pushing)
+			 pushing = ''
+		   }
+		} else {
+		  pushing = pushing + obfuscator
+		}
+	  } //end for loop
+      return array
+ }
+
+function convertNumbers(term, swapVars = true, handleArrays = true, errorAtArrays = false, descriptionOfCalled = 'null') {
+  console.log(varValueList, term)
+  let potentialNumber = +(term)
+  potentialNumber = potentialNumber.toString()
+  if (term === potentialNumber && !(isNaN(potentialNumber)) && term.length != 0 && potentialNumber.length != 0){
+	 return +(term)
+  } else if (term == 'true') {
+    return true
+  } else if (term == 'false') {
+    return false
+  } else if (term == 'NaN') {
+    return NaN
+  } else if (term == 'undefined') {
+    return undefined
+  }
+  if (handleArrays) {
+  let leftBracketIndex = linearSearchOutsideString(term, '[')
+  let rightBracketIndex = linearSearchOutsideString(term, ']')
+  if (leftBracketIndex != -1 && rightBracketIndex != -1) {
+    if (leftBracketIndex < rightBracketIndex) {
+	  if (leftBracketIndex == 0) {
+	    if (errorAtArrays) {
+		globalDisplay(`The place you are trying to use a whole array, ${descriptionOfCalled}, does not support arrays`, 'error');
+		}
+	    term = splitOutsideFuncAndString(term,',', true);
+		let termTypeList = []
+		for (let i=0; i < term.length; i++) {
+		termTypeList[i] = []
+		term[i] = assignType(term[i], termTypeList[i])
+	    termTypeList[i] = (term[i])[1]
+		term[i] = (term[i])[0]
+		//console.log(term[i], termTypeList[i]).gaga
+		if ((termTypeList[i])[0] == '<-') {
+		 globalDisplay('Cannot assign a seperate term in the middle of an array','error')
+		}
+		if (termTypeList[i].length != 1) {
+		//doesn't call simplifytoValue if the value is already obtained
+	    term[i] = simplifytoValue(term[i], termTypeList[i])
+		term[i] = convertNumbers(term[i])
+	   } else if ((termTypeList[i])[0] == '#EX#') {
+	    term[i] = doMath((term[i])[0])
+	    //term[i] = (term[i])[0]
+	   } else if ((termTypeList[i])[0] == '#EV#'){
+	    console.log('SINGLE NUMBER')
+	    term[i] = convertNumbers((term[i])[0], true)
+		//term[i] = (term[i])[0]
+	    //do nothing. We already have just a single value.
+	   } else {term[i] = simplifytoValue(term[i], termTypeList[i]);
+	   term[i] = convertNumbers(term[i])}
+	  }
+      return term	  
+	  } else {
+	  //This is for variable calling
+	   console.log(varList, varValueList)
+	   let variable = term.substring(0, leftBracketIndex)
+	   let indexofVar = binarySearch(variable,varList)
+	   if (indexofVar == -1) {
+	    //Variable not found error
+	   }
+	   indexofVar = varValueList[indexofVar] //This is the array
+	   console.log(indexofVar)
+	   //This should get the variable
+	   Array.isArray(indexofVar) || globalDisplay(`The variable you tried to call like it was an array was in fact, not an array.`, 'error').intentionalErrorbyPsuedocodeRunner
+	   let indexCalling = term.substring(leftBracketIndex+1, rightBracketIndex)
+	   console.log(indexCalling, 'before math doing check')
+	   if (linearSearchList(indexCalling,mathMinusBrackets) != -1) {
+	    indexCalling = doMath(indexCalling) 
+		//do math if there is an operation in the index calling
+	    indexCalling == '#ER-EMDAS#' && globalDisplay(`Ouch!`,'error').errorByPsuedocodeRunnerDueToBadCode()
+	    //usage of OR instead of an if statement to make it faster????????
+	   } else {indexCalling = convertNumbers(indexCalling)}
+	    if (typeof(indexCalling) == 'number') {
+		 console.log(indexofVar.length)
+		 if (indexCalling-1 >= indexofVar.length || indexCalling < 1) {
+		  globalDisplay(`This array's length is ${indexofVar.length}, and the index you called is ${indexCalling}.
+		  This index is outside of the array. Reminder that indexing in this language is 1-based, meaning the first index is 0, not 1. Any values less than 1 are outside of this list.`, 'error')
+		 }
+		 indexCalling = Math.round(indexCalling)
+		 console.log(indexCalling)
+		 term = indexofVar[indexCalling-1]
+		  console.log(term)
+		 return term
+		} else {
+		  globalDisplay(`You have to be kidding me! You typed in an invalid value for the 
+		  for the index you will be calling. Function calls are not supported for indices by the way.
+		  That means that if you want to use a function, I recommend setting a variable to the result and then using that variable`, 'error'); intentionalError.yesis()
+		}
+	  } //end else
+	} else {
+	 globalDisplay('What? You know you\'re supposed to declare arrays left bracket at the start, and right bracket at the end, right?', 'error')
+	}
+  }}
+  if (!(settings.canMoveParametersString)) {
+  if (term == 'forward') {return 'DF#'}
+  if (term == 'backward') {return 'DB#'}
+  if (term == 'left') {return 'DL#'}
+  if (term == 'right') {return 'DR#'}
+  }
+  if (typeof(term) == 'string' && swapVars && term[0] != '"' && term[0] != '#' && term != '(' && term != ')') {
+  let indexHere = binarySearch(term, varList)
+  if (indexHere == -1) {return undefined}
+    return varValueList[indexHere]
+  //supposed to mean that whenever a non-string is called, it's treated like
+  //a variable, and if it's either not there or is -1
+  }
+  //Bug fixed: sending a boolean FALSE through convertNumbers 
+  return term
+} //end function
+function doMath(expression, endEarly = false, premadeOperationList = null) {
+  let operations = []; let terms = []; let quoteBoy = false; let numPush = ''; let lastNumString = false; let parenthBuffer = ''
+  let operationPush = ''; let stringLocations = []; let bracketBoy = true
+   let expressionSplit = []
+   if (premadeOperationList == null) {
+   expressionSplit = expression.split("")
+   //console.log(expressionSplit)
+   //'failed'.push(undefined)
+   for (let i =0; i < expressionSplit.length; i++) {
+     let val = expressionSplit[i] //too long to write
+     //try out a dual pusher system
+     if (val == '"') {
+       quoteBoy = !(quoteBoy)
+     }
+	 if (val == '[' || val == ']') {bracketBoy = !(bracketBoy)}
+     if ((quoteBoy == false && val != '"') && (bracketBoy && val != ']')) {
+       if (val == '(' || val == ')') {
+         if (numPush == '-') {
+           numPush = ''
+           terms.push(0)
+           operations.push('-')
+           //What I want this to do is for it to replace all negatives in front of a parentheses with 0- because that's more workable here Ex: -(-2) should become 0-(-2)
+         }
+		   if (numPush != '') {
+		    terms.push(numPush)
+		    numPush = ''
+		   }
+           terms.push(val)
+		   if (operationPush != '') {
+		    operations.push(operationPush)
+			operationPush = ''
+		   }
+		   operations.push(val)
+         if (i == expressionSplit.length -1) {
+            if (operationPush != '') {
+              operations.push(operationPush)
+            } if (numPush != '') {
+              terms.push(numPush)
+              if (lastNumString == true) {
+                 stringLocations.push(i)
+              }
+            }
+           if (parenthBuffer != '') {
+             terms.push(parenthBuffer)
+             operations.push(parenthBuffer)
+             parenthBuffer = ''
+           }
+         } //This is the last term panic
+      } else if (!(val == '+' || (val == '-' && numPush != '') || val == '*' || val == '/' || val == '^' || val == '\uF8FF' ||  val == '\uF8FE' /* \uF8FE is AND, \uF8FF is MOD, \uF8FD is OR */|| val == '\uF8FD'|| val == '<' || val == '>' || val == '≠' || val == '=' || val == '≥' || val == '≤' || ((val == "N" && expressionSplit[i+1] == "O" && expressionSplit[i+2] == "T" && expressionSplit[i+3] == "=") || (expressionSplit[i-1] == "N" && val == "O" && expressionSplit[i+1] == "T" && expressionSplit[i+2] == "=") || (expressionSplit[i-2] == "N" && expressionSplit[i-1] == "O" && val == "T" && expressionSplit[i+1] == "=") || (expressionSplit[i-3] == "N" && expressionSplit[i-2] == "O" && expressionSplit[i-1] == "T" && val == "=") ) || ((val == ">" && expressionSplit[i+1] == "=") || (expressionSplit[i-1] == ">" && val == "=") ) || ((val == "<" && expressionSplit[i+1] == "=") || (expressionSplit[i-1] == "<" && val == "=")) )){
+         //report(3,`This is a number/boolean: ${val}`)
+         lastNumString = false
+         numPush = numPush + expressionSplit[i]
+         if (i == expressionSplit.length -1) {
+            if (operationPush != '') {
+              operations.push(operationPush)
+            } if (numPush != '') {
+              terms.push(numPush)
+              if (lastNumString == true) {
+                 stringLocations.push(i-1)
+              }
+            }
+           if (parenthBuffer != '') {
+             terms.push(parenthBuffer)
+             parenthBuffer = ''
+           }
+         } else if (operationPush != '') {
+           operations.push(operationPush)
+         }
+        if (parenthBuffer != '') {
+             terms.push(parenthBuffer)
+             operations.push(parenthBuffer)
+             parenthBuffer = ''
+           }
+         operationPush = ''         
+       } else { // + - * / ^ MOD AND OR NOT < > = ≥ ≤
+         //report(3,`${val} is an operator, like MOD`)
+           operationPush = operationPush + expressionSplit[i]
+         if (i == expressionSplit.length -1) {
+            if (operationPush != '') {
+              operations.push(operationPush)
+            } if (numPush != '') {
+              terms.push(numPush)
+              if (lastNumString == true) {
+                 stringLocations.push(i-1)
+              }
+            }
+           if (parenthBuffer != '') {
+             terms.push(parenthBuffer)
+             operations.push(parenthBuffer)
+             parenthBuffer = ''
+           }
+         } else if (numPush != '') {
+           if (lastNumString == true) {
+                 stringLocations.push(i-1)
+                if (numPush.length == 3) {
+                  numPush = numPush + '#'
+                }
+              }
+           if (numPush != '-') {
+              terms.push(numPush)
+             console.log(numPush)
+           }
+           if (parenthBuffer != '') {
+             terms.push(parenthBuffer)
+             operations.push(parenthBuffer)
+             parenthBuffer = ''
+           }
+         }
+         numPush = ''
+       } //end if operation or value
+     }else { ////end if we're dealing with it (strings)
+	 //This is also where brackets go
+       if (lastNumString == false) {
+         stringLocations.push(i) // This tracks start and end vals
+       }
+       //console.log(`${val} is part of a string`)
+       lastNumString = true
+       numPush = numPush + val
+       //report(3,numPush)
+       if (i == expressionSplit.length -1) {
+            if (operationPush != '') {
+              operations.push(operationPush)
+            } if (numPush != '') {
+              terms.push(numPush)
+              if (lastNumString == true) {
+                 stringLocations.push(i)
+              }
+            }
+           if (parenthBuffer != '') {
+             terms.push(parenthBuffer)
+             operations.push(parenthBuffer)
+             parenthBuffer = ''
+           }
+         }
+       if (operationPush != '') {
+           operations.push(operationPush)
+         }
+         operationPush = ''  
+     } //end else
+   } //end for
+  if (endEarly == true) {return [terms, operations]
+  }else if (endEarly == 2 ) {
+   for (let i=0; i < terms.length; i++) {
+   terms[i] = convertNumbers(terms[i], true, true, true, 'String conversion to a number') //end
+  }
+  return [terms, operations]
+  }
+  //This ends the 'dual pusher' section
+} else { terms = expression; operations = premadeOperationList}
+//else above happens when  premadeOperationList already has been premade
+  report(2, terms); console.log('pre convertNumbers in doMath')
+  //Fold all console.logs into report, and make it a single switch to enable or disable them
+  if (endEarly != 2) {
+  for (let i=0; i < terms.length; i++) {
+   terms[i] = convertNumbers(terms[i], true, true, true, 'Math') //end
+  }}
+  //here, order the result, and then delete all terms between  the nth( and ), then delete the nth) and add the result to the term where ( was, and then update i to there as well
+  console.log(`${terms} for ${operations}`);
+  //Parentheses recurcion= Delete the parentheses, then call the function on every value inside the parentheses. Wait for one to finsih until the other does (both lists, I mean)
+  console.log(terms, operations)
+  //'fail'.push(undefined)
+  let hasParenth = true; let result
+  loopman: while (hasParenth == true) {
+    result = parenthHandler(terms,operations)	
+    if (result == '#ER-EMDAS#') { console.log(result); return '#ER-EMDAS#'}
+    if (Array.isArray(result) == false) { 
+	console.log('Math result: ' + result); return result}
+	terms= result[0]
+    operations = result[1]
+    hasParenth = false
+  for (let i=0; i < terms.length; i++) {
+    if (terms[i] == '(' ) {
+      hasParenth = true
+    } else if (terms[i] == ')' && hasParenth == false) {
+      if (i == terms.length-1) {
+        terms.pop()
+      } else {
+        console.log('OH NO! UNMATCHED RIGHT PARENTHESES DETECTED!', terms, operations)
+        return 0
+      }
+    }
+  } //end for parenth checker terms
+    for (let i=0; i < operations.length; i++) {
+    if (operations[i] == '(' ) {
+      hasParenth = true
+    } else if (operations[i] == ')' && hasParenth == false) {
+      if (i == operations.length-1) {
+        operations.pop()
+      } else {
+        console.log('OH NO! UNMATCHED RIGHT PARENTHESES DETECTED!', terms, operations)
+      }
+    }
+  } //end for parenth checker terms
+  console.log(hasParenth, terms, operations, 'check')
+  }
+  terms= EMDAS(terms, operations)
+  console.log(terms + ' result of the math');
+  return terms
+  //console.log(typeof(terms)); //console.log(priorityList); console.log(priorityOperationList)
+} //end function
+let amountOperated = 0
+
+
+ function EMDAS (termList, opList) {
+   let result = []
+   console.log(termList, opList, 'This entered EMDAS')
+  for (let i=0; i < termList.length; i++) {
+     if (termList[i] == '(') {
+       result = parenthHandler(termList, opList) //This juggling should remove all parentheses
+       termList = result[0]
+       opList = result[1]
+       //console.log(result, termList, opList, 'into EMDAS')
+     }
+   }
+   //console.log(termList, opList, 'This is the result of it being broken down into EMDAS')
+   let term1; let term2; let op; let truthyFalsy; 
+   let operationAmount = 0;
+    for (let i=0; i < termList.length; i++) {
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+        if (op == '^') {
+		  if (settings.undefinedError && (term1 == undefined || term2 == undefined)){
+			globalDisplay(`Cannot do math with ${term1}`, 'error')
+		  }
+		  if (term1 == undefined && term2 != undefined) {
+		   term1 = term2
+		   term2 = 1
+		   termList[i] = 0
+		  } else if (term2 == undefined && term1 != undefined) {
+		   term2 = 1
+		   termList[i+1] = 0
+		  } else if (term2 == undefined && term1 == undefined) {
+		   //implement logic for scanning next operator
+		   if (opList[i+1] == '+' || opList[i+1] == '-') {
+		    term1 =0;
+		   } else if (opList[i+1] == '\uF8FF'){
+		     term1 = termList[i+2]
+		   } else {
+		    term1 = 1
+		   }
+		   term2 = 1
+		  }
+          if (term1 * -1 > term1 && term2 < 1) { //negative and fractional test
+           globalDisplay(`This ${term1} is a negative number and because of that solving this equation uses the imaginary number i. To learn more check out this link (https://www.khanacademy.org/math/algebra2/x2ec2f6f830c9fb89:complex/x2ec2f6f830c9fb89:imaginary/a/intro-to-the-imaginary-numbers). A setting for imaginary numbers is not avaible yet, but you could perhaps make that a function!`, 'error')
+            return '#ER-EMDAS#'
+          } else if (term1 ==0 && term2 == 0) {globalDisplay(`0^0 is a prombelm with more than one solution. See https://en.wikipedia.org/wiki/Zero_to_the_power_of_zero to learn more`, 'error')
+		  return '#ER-EMDAS#'}
+          //console.log(termList); console.log(opList);
+         console.log('made it here', term1, term2, i)
+		termList=superShift(termList, i+1)
+        opList = superShift(opList, i);
+        termList[i] = term1 ** term2
+		i--
+          //console.log(termList); console.log(opList); console.log(i)
+        }//end if
+	 if (termList[i] == undefined && i >= 0) {
+	  if (!(settings.undefinedError)) { //PLZ
+	  if (op == '+' || op=='-'){termList[i] = 0;
+	  }else if (op == '\uF8FF') {
+	  if (termList[i+1] == undefined) {
+	    termList[i] = 1; termList[i+1] = 1
+	  } else {
+	  termList[i] = termList[i+1]
+	  termList[i+1] = termList[i+1] +1
+	  }} else {termList[i] = 1}	  
+	  if(typeof(termList[i+1]) == 'string' && op != '+') {
+	  termList[i] = '';
+	  } else if (typeof(termList[i+1]) == 'string' && op == '+') {
+	  termList[i] = '""'}
+	  } else {globalDisplay(`Cannot do math with ${term1}`, 'error'); return '#ER-EMDAS#'}
+	  i--;
+	 } else if (termList[i+1] == undefined && opList[i] != undefined) {
+	  if (!(settings.undefinedError)) {
+	  if (op == '+' || op == '-'){termList[i+1] = 0
+	  } else if (op == '\uF8FF') {
+	  termList[i+1] = termList[i]+1
+	  } else {termList[i+1] = 1} 
+	  if(typeof(termList[i]) == 'string' && op != '+') {
+	  termList[i+1] = ''
+	  } else if (op == '+' && typeof(termList[i]) == 'string') {termList[i+1] = '""'}
+	  } else {globalDisplay(`Cannot do math with ${term2}`, 'report')}
+	  i--;
+	 }
+	 } //end if
+   //START HERE
+   console.log(termList, opList, 'end ^')
+   for (let i=0; i < termList.length; i++) {
+      op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+     if (op != undefined && term2 != undefined && term1 != undefined) {
+       if (op == '/') {
+	    if (term1 == '0' || term2 == '0') {
+		 globalDisplay('Division by 0 is a terrible idea! It is either undefined or could literally be any number. See  this link for more details', 'error', 'https://www.newsroom.hlf-foundation.org/blog/article/why-dividing-by-zero-is-a-terrible-idea/')
+		 'Intentional Error by Psuedocode Runner'.push(undefined)
+		}
+         if (typeof(term1) == 'number' && typeof(term1) == 'number') {
+           //do nothing
+         } else if (settings.truthiness === true) {
+           truthyFalsy = boolNum(term1, term2)
+           if (typeof(truthyFalsy[0]) == 'number') {
+             term1 = truthyFalsy[0]
+           }
+           if (typeof(truthyFalsy[1]) == 'number') {
+             term2 = truthyFalsy[1]
+           }
+         } else {
+           globalDisplay(`Only numbers allowed for${op}.`, 'error')
+           return '#ER-EMDAS#'
+         }
+         termList = superShift(termList, i+1)
+         opList = superShift(opList, i)
+         termList[i] = (term1/term2)
+         operationAmount++;
+       }
+        op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op === '*') {
+         if (typeof(term1) == 'number' && typeof(term1) == 'number') {
+           //do nothing
+         } else if (settings.truthiness === true) {
+           truthyFalsy = boolNum(term1, term2)
+           if (typeof(truthyFalsy[0]) == 'number') {
+             term1 = truthyFalsy[0]
+           }
+           if (typeof(truthyFalsy[1]) == 'number') {
+             term2 = truthyFalsy[1]
+           }
+         } else {
+           globalDisplay(`Only numbers allowed for${op}.`, 'error')
+           return '#ER-EMDAS#'
+         }
+         termList = superShift(termList, i+1)
+         opList = superShift(opList, i)
+         termList[i] = term1 * term2
+         operationAmount++;
+       } //end * operator 
+        op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op === '\uF8FF') {
+         if (typeof(term1) == 'number' && typeof(term1) == 'number') {
+           //do nothing
+         } else if (settings.truthiness === true) {
+           truthyFalsy = boolNum(term1, term2)
+           if (typeof(truthyFalsy[0]) == 'number') {
+             term1 = truthyFalsy[0]
+           }
+           if (typeof(truthyFalsy[1]) == 'number') {
+             term2 = truthyFalsy[1]
+           }
+         } else {
+           globalDisplay(`Only numbers allowed for${op}.`, 'error')
+           return '#ER-EMDAS#'
+         }
+		 if (term2 == 0) {
+		  globalDisplay('MOD 0 requires dividing by 0. That is impossible! It is undefined!', 'error')
+		 'Intentional Error By Pseudocode Runner'.push(undefined)
+		 }
+         termList = superShift(termList, i+1)
+         opList = superShift(opList, i)
+         termList[i] = term1 % term2
+         operationAmount++
+       }
+     } //end all terms defined
+     if (operationAmount != 0) {
+       i=i-1
+     }
+     operationAmount = 0
+   } //end for
+   //console.log(termList, opList, 'end */MOD')
+   //console.log(termList); console.log(opList); console.log('*/MOD')
+   let plusStringer = 0; let termSplit; let type1; let type2
+   for (let i=0; i < termList.length; i++) {
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+     type1 = typeof(term1); type2 = typeof(term2)
+     if (op != undefined && term2 != undefined) {
+       report(3, term1 + term2 + 'adding')
+       console.log(type1, type2, 'types')
+        if (op == '+') {
+          if ((typeof(term1) == 'number' || typeof(term1) == 'string')) {
+           if (type1 == 'string') {
+             plusStringer = 1
+           }
+         } else if ((type2 == 'string') && settings.stringNumConcat) {
+           term1 = term1.toString()
+           plusStringer = 1
+         } else if (settings.truthiness === true) {
+           term1= boolNum(term1)
+           term1 = term1[0]
+         } else {
+           globalDisplay('Well done. You used one of the THREE values you cannot use for + !', 'error')
+           return '#ER-EMDAS#'
+         }
+          if ((type2 == 'number' || type2 == 'string')) {
+           if (typeof(term2) == 'string') {
+             plusStringer += 2
+           }
+         } else if ((type1 == 'string' || type2 == 'string') && settings.stringNumConcat) {
+            term2 = term2.toString()
+            plusStringer += 2
+         } else if (settings.truthiness === true) {
+           term2= boolNum(term2)
+           term2= term2[0]
+         } else {
+           globalDisplay('Well done. You used one of the THREE values you cannot use for + !', 'error')
+           return '#ER-EMDAS#'
+         }
+          //console.log(term1,term2)
+          if (type1 != type2 && !(settings.stringNumConcat) && (type1 == 'string' || type2 == 'string')) {
+            if (type1 == 'boolean') {
+              if (term1 == 1) {
+                term1 = true
+              } else {
+                term1 = false
+              }
+            } 
+            if (type2 == 'boolean') {
+              if (term2 == 1) {
+                term2 = true
+              } else {
+                term2 = false
+              }
+            }
+            //That bit is to convert numbers back to booleans
+             globalDisplay(`String concatanation to numbers and booleans disabled. ${term1} is a ${type1}, and ${term2} is a ${type2}. 
+In order to add strings and other values, enable this setting in your settings menu, or turn both into the correct value for your operation.`, 'error')
+             return '#ER-EMDAS#'
+           }
+          if (plusStringer == 1 || plusStringer == 3) {
+            //console.log(`${term1} is a string`)
+            termSplit= term1.split("")
+            if (type1 == 'boolean') {
+              
+            } else if (termSplit[0] == '"'){
+              termSplit.pop(); 
+            }
+            if (termSplit[termSplit.length -1] != ' ' && settings.poststringSpace) {
+              termSplit.push(' ')
+            }
+            //console.log(termSplit)
+            term1=termSplit
+            plusStringer--;
+          } 
+          if (plusStringer == 2){
+            //console.log(`${term2} is a string`)
+            termSplit= term2.split("")
+            if (type2 == 'boolean') {
+              
+            } else if (termSplit[0] = '"') {
+              termSplit.shift();
+            }
+            if (type1 == 'number' && settings.poststringSpace) {
+              if (termSplit[0] != '  ') {
+                termSplit.unshift(' ')
+              }
+            }
+            term2=termSplit
+            //console.log(termSplit, 2)
+          } 
+        termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+          if (Array.isArray(term1) || Array.isArray(term2)) {
+		    if (!(Array.isArray(term1))) {term1 = term1.toString(); 
+			term1 = term1.split(""); term1.shift("")}
+		   if (!(Array.isArray(term2))) {term2 = term2.toString();
+		   term2 = term2.split(""); term2.push("") }
+		   termSplit = []
+            termSplit = term1.concat(term2)
+			console.log(termSplit)
+			//PLZ
+            //console.log(termSplit, 'final')
+            let indexGuy = i
+            termList[i] = termSplit.join("")
+			console.log(termList[i])
+          } else {
+            termList[i] = term1 + term2 
+          }
+          //console.log('addition complete')
+          operationAmount++
+          //console.log(termList); console.log(opList); console.log('+')
+        }
+        op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       //console.log(op)
+       if (op == '-') {
+          //console.log(term1, term2, termList, op)
+          if (typeof(term1) == 'number' && typeof(term2) == 'number') { //PLZ
+           //do nothing
+         } else if (settings.truthiness === true) {
+           truthyFalsy = boolNum(term1, term2)
+           if (typeof(truthyFalsy[0]) == 'number') {
+             term1 = truthyFalsy[0]
+           }
+           if (typeof(truthyFalsy[1]) == 'number') {
+             term2 = truthyFalsy[1]
+           }
+         } else {
+           globalDisplay(`Only numbers allowed for${op}.`, 'error')
+           return '#ER-EMDAS#'
+         }
+        termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+          termList[i] = term1 - term2
+         operationAmount++
+        }
+     } //end if
+     if (operationAmount != 0) {
+       i=i-1
+     }
+     operationAmount = 0
+   } //end for + -
+  //console.log(termList); console.log(opList); console.log('-')
+for (let i=0; i < termList.length; i++) {
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+     if (op != undefined && term2 != undefined) {
+        if (op == '=') {
+          //console.log(`${term1}==${term2}`)
+        termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 == term2) == true) {
+         termList[i] = true
+        } else {
+          termList[i] = false
+        }
+        operationAmount++
+        }
+        op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op == 'NOT=' || op == '≠') {
+        termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 != term2) == true) {
+          termList[i] = true
+        } else {
+          termList[i] = false
+        }
+         operationAmount++
+        }
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op == '>') {
+          termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 > term2) == true) {
+          termList[i] = true
+        } else {
+          termList[i] = false
+        }
+         operationAmount++
+        } 
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op == '<') {
+          termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 < term2) === true) {
+          termList[i] = true
+        } else {
+          termList[i] = false
+        }
+         operationAmount++
+        }
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op == '>=' || op == '≥') {
+         termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 >= term2) == true) {
+          termList[i] = true
+        } else {
+          termList[i] = false
+        }
+         operationAmount++
+        }
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op == '<=' || op == '≤') {
+          termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 <= term2) == true) {
+          termList[i] = true
+        } else {
+          termList[i] = false
+        }
+        termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+         operationAmount++
+        } 
+     } //end if
+      if (operationAmount != 0) {
+       i=i-1
+     }
+     operationAmount = 0
+   } //end for all the rest
+   for (let i=0; i < termList.length; i++) {
+     op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+     if (op != undefined && term2 != undefined) {
+        if (op == '\uF8FE') { 
+         if (typeof(term1) == 'boolean' && typeof(term2) == 'boolean') {
+           //do nothing
+         } else if (settings.truthiness == true){
+           truthyFalsy = boolNum(term1, term2)
+           if (typeof(truthyFalsy[0]) === 'boolean') {
+             term1 = truthyFalsy[0] 
+           } //switch for all the rest as well
+           if (typeof(truthyFalsy[1]) === 'boolean') {
+             term2 = truthyFalsy[1] 
+           }
+         } else {
+           globalDisplay(`Only boolean values for operation ${op}`, 'error')
+          return '#ER-EMDAS#'
+         }
+          termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 && term2) == true) {
+          termList[i] = true
+        } else {
+          termList[i] = false
+        }
+        operationAmount++
+        } 
+       op = opList[i]; term1 = termList[i]; term2 = termList[i+1]
+       if (op == '\uF8FD') {
+         if (typeof(term1) == 'boolean' && typeof(term2) == 'boolean') {
+           //do nothing
+         } else if (settings.truthiness == true){
+            truthyFalsy = boolNum(term1, term2)
+           if (typeof(truthyFalsy[0]) === 'boolean'){
+             term1 = truthyFalsy[0]
+           } 
+           if (typeof(truthyFalsy[1]) === 'boolean') {
+             term2 = truthyFalsy[1]
+           } 
+         } else {
+           globalDisplay(`Only boolean values for operation ${op}`, 'error')
+           return '#ER-EMDAS#'
+         }
+        termList=superShift(termList, i+1)
+        opList = superShift(opList, i)
+        if ((term1 || term2) == true) {
+          termList[i] = true
+        } else {
+          termList[i] = false
+        }
+        }
+       operationAmount++
+     } //end if 
+     if (operationAmount != 0) {
+       i=i-1
+     }
+     operationAmount = 0
+   } //end for AND OR
+   if (termList.length == 1 && opList.length == 0) {
+     termList=termList[0]
+     opList = ''
+     console.log(termList, 'This set came out of EMDAS')
+     return termList
+   }
+   console.log('EMDAS failed!')
+   return '#ER-EMDAS#'
+ } //end func
+ //TMRW deal with all the undefined's for all the operations (settings.undefinedError)
+ // and test the negatives as well
+function parenthHandler(termList, operationList) {
+  let termsPass = findInsideParenth(termList)
+  console.log(termsPass);
+  let termsPassIndex = termsPass[1]
+  termsPass = termsPass[0]
+  let operationsPass = findInsideParenth(operationList)
+  let operationsPassIndex = operationsPass[1]
+  operationsPass = operationsPass[0]
+  console.log(termsPass)
+  if (termsPass.length === 0) {
+    return EMDAS(termList, operationList) //if the value has no parentheses
+  }
+  console.log(termsPass, termsPassIndex, 'terms')
+  console.log(operationsPass, operationsPassIndex, 'operations')
+  for (let i=termsPassIndex[1]; i >= termsPassIndex[0]; i--) {
+    termList= superShift(termList, i)
+  }
+  for (let i=operationsPassIndex[1]; i >= operationsPassIndex[0]; i--) {
+    operationList= superShift(operationList, i)
+  }
+  termList[termsPassIndex[0]-1] = EMDAS(termsPass, operationsPass)
+  operationList = superShift(operationList, operationsPassIndex[0]-1)
+  return [termList, operationList]
+}
+function superShift (array, termID) {
+  let arrayUnchanged = []; let arrayShifted = []; let result = []
+  for (let i =0; i < array.length; i++) {
+    if (i > termID) {
+      arrayUnchanged.push(array[i])
+    } else if (i < termID) {
+      arrayShifted.push(array[i])
+    }
+  } //end for
+  result = arrayShifted.concat(arrayUnchanged)
+  return result
+} // end func
+function boolNum (value1, value2 = null) {
+  let valueArray = [value1, value2]
+  console.log(valueArray)
+  if (value2 == null) {
+    valueArray.pop()
+  }
+  for (let i=0; i < valueArray.length; i++) {
+	if (valueArray[i] === 0 || valueArray[i] === undefined || valueArray[i] === '' || valueArray[i] !== valueArray[i] || (Array.isArray(valueArray[i]) && valueArray[i].length == 0)) {
+      valueArray[i] = false
+    } else if (typeof(valueArray[i]) !== 'boolean') {
+      valueArray[i] = true
+    } else if (valueArray[i] === true) {
+      valueArray[i] = 1
+    } else {
+      valueArray[i] = 0
+    }
+  }
+  return valueArray
+}//end boolNum func
+
+function Stringify(value)
+{
+  if (Array.isArray(value)) {
+    return'['+ value.toString() + ']'  
+  }
+  return value.toString()
+}
+
+function globalDisplay(arg, type = 'userOrdered', link = null) {
+  console.log('#DISPLAYED BY GRAND DISPLAYER#', arg)
+  if (type == 'error') {
+  if (settings.DISPLAYSeperatedNewLine) {arg = '#ERROR MESSAGE#: \n' + arg}
+  else {arg = '#ERROR MESSAGE#: \u0009' + arg}
+  }
+  //if (type == 'report') {return 0}
+ if (settings.DISPLAYSeperatedNewLine) {
+ thingToChange.textContent += (arg + '\n' + '\n')}
+else {thingToChange.textContent += arg + '      '} 
+if (type == 'error') {'intentionalErrorbyPsuedocodeRunner'.dueToBadUserSumbittedCode()}
+}
+function report(type=1, arg1='default', arg2=null, arg3=null) {
+  let enableArray= [true,true,true]
+  /* Type 1 = End of function Type 2 = End of for loop 
+  Type 3 = During for loop*/
+  if (type == 1) { //End of function reports
+    if (enableArray[type-1]) {
+     console.log(arg1); 
+    if (arg2 != null) {
+      console.log(arg2); 
+    }  if (arg3 != null) {
+      console.log(arg3)
+    }  
+    }
+  } else if (type == 2) { //End of for loop reports
+    if (enableArray[type-1]) {
+     console.log(arg1); 
+    if (arg2 != null) {
+      console.log(arg2); 
+    }  if (arg3 != null) {
+      console.log(arg3)
+    }  
+    }
+  } else if (type == 3) { //during for loop reports
+    if (enableArray[type-1]) {
+     console.log(arg1); 
+    if (arg2 != null) {
+      console.log(arg2); 
+    }  if (arg3 != null) {
+      console.log(arg3)
+    }  
+    }
+  }
+}
+ let checkbox = document.getElementById('agreement')
+if (canStore) {
+   agreed = localStorage.getItem('checkboxStatus')
+  if (agreed != null && agreed != undefined) {
+     agreed = JSON.parse(agreed)
+	 console.log('hi')
+	 if (agreed) {
+	   checkbox.checked = true
+	   console.log('we did it')
+	   sumbitLearningAgreement()
+	 
+	 }
+  }
+}
+if (checkbox.checked != true) {
+  emptyTextArea.disabled = true 
+}
+
+function sumbitLearningAgreement() {
+  
+  if (checkbox.checked == true) {
+    let entireCheckboxText = document.getElementById('invisToggle')
+	let agreementText = entireCheckboxText.innerText
+	console.log(agreementText)
+	entireCheckboxText.style.visibility = "hidden"
+	entireCheckboxText.style.width = 0
+	entireCheckboxText.style.height = 0
+	checkbox.disabled = true
+	let reminder = document.getElementById("remind")
+	reminder.innerText = "Remember the agreement you agreed to. It said \"" + agreementText+ "\". It still applies now"
+	checkbox.innerText = ''
+	entireCheckboxText.innerHTML = '';
+	(document.getElementById('CLEANUP')).innerHTML = ''
+	emptyTextArea.disabled = false
+	if (canStore) {
+    localStorage.setItem('checkboxStatus', JSON.stringify(true))
+	console.log(JSON.parse(localStorage.getItem('checkboxStatus')))
+  }}
+}
+
+  
+function findInsideParenth(array) {
+ console.log(array)
+  //We may need to find the value inside the parentheses
+  //and then we need to find the index
+  let state=false; let lastState = false; let arrayPush = []
+  let startIndex; let endIndex; let parenthCount = 0
+  for (let i=0; i < array.length; i++) {
+    lastState = state
+    if (array[i] == ')' ) {
+      parenthCount-- //the end of the list
+      if (parenthCount == 0) {
+       endIndex = i 
+      }
+    }
+    if (state == true && parenthCount === 0) {
+      return [arrayPush, [startIndex, endIndex]]
+    }
+    //parenthCount should equal 0 at the start and end of the expression
+    if (state == true) {
+      arrayPush.push(array[i])
+    }
+    //Fix this so it accounts for
+    if (array[i] == '(') {
+      if (parenthCount === 0) {
+        state = true //the beginning of the list
+        startIndex = i+1
+      }
+      parenthCount++
+    }
+  } //end for
+  return [arrayPush, [startIndex, endIndex]]
+}
+
+function runProcedure(string) {
+if (insideProcedure != 0) {globalDisplay('Cannot declare procedures inside procedures.', 'error')}
+ let procArray = string.split(","); console.log(string, procArray)
+ for (let i=0; i < procArray.length -1; i++) {
+	  variableIsValid(procArray[i], true) || globalDisplay(`This variable or procedure name, ${procArray[i]}, does not meet the criteria. Which is...
+If you're new at this, then you might not know that the things we assign as variables
+are not values like 67 or strings like "Skibidi Rizz", or functions like DISPLAY("Emotional Damage!") (or even DISPLAY). 
+We assign variables to letters without quotes around them like all the ones that are making 
+up this message (at least, visually, to you). Please remember that and fix it.
+We cannot assign things that start with numbers, or contain mathematical symbols (excluding AND, OR, and MOD)
+Side note: AND, OR, and MOD (also IN) must be seperated with spaces when you are using them with variables. x AND y is good, 
+2 AND 4 is good, 2AND4 is good, but xANDy is bad. Capiche?
+The variables we assign cannot be special words. In this case, that includes AND, OR, MOD, IN, ELSE, FOREACH, TIMES, and PROCEDURE.
+If you're not new... STOP TROLLING! DO YOU KNOW HOW FOOLPROOF PEOPLE HAVE TO MAKE THEIR CODE 
+BECAUSE OF PEOPLE LIKE YOU!!`, 'error')
+	 }
+	  functionListCSP = addTermtoSorted(functionListCSP, procArray[0], procedureData)
+	  let indexOfProcedure = functionListCSP[1]; procedureData = functionListCSP[2];
+	  functionListCSP = functionListCSP[0];
+	  procedureData[indexOfProcedure] = [procArray[procArray.length -1].substring(1, procArray[procArray.length -1].length-1)]
+	  for (let i=1; i < procArray.length -1; i++) {
+	   procedureData[indexOfProcedure].push(procArray[i])
+	  }
+	  console.log(procArray, functionListCSP, procedureData)
+ return undefined
+}
+
+function findFunction(string, returnType = 'index', nextTerm = null) {
+ console.log(functionListCSP, procedureData);
+  let indexOfCSP = binarySearch(string,functionListCSP, 'equal', returnType) 
+  const indexOfJS = binarySearch(string, functionListJS, 'equal', returnType)
+  if (nextTerm && string == 'PROCEDURE') {
+   runProcedure(nextTerm)
+  }
+  console.log(indexOfCSP, indexOfJS, returnType)
+  if (returnType == 'index') {
+     if ((indexOfCSP== -1) && (indexOfJS == -1)) {
+       return -1
+     } else if ((indexOfJS == -1)) {return indexOfCSP} else {return indexOfJS}
+  } else {
+    return indexOfCSP || indexOfJS
+  }
+} //end func
+
+function binarySearch (string, array, method = 'equal', returnType = 'index', sortType = 'alpha') {
+  let closestNoOver = ' '; let indexNoOver = -1
+ if (array.length <= 2) {
+    for (let i=0; i < array.length; i++) {
+	   if (method == 'equal') {
+	     if (array[i] == string) {
+		  if (returnType == 'index') {
+		  return i} else 
+		  {return true}
+		 }
+	   } else {
+	    if (closestNoOver == undefined) {closestNoOver = array[i]; indexNoOver = i}
+		else {
+		 if (!(isGreaterThan(array[i], string, sortType)) && isGreaterThan(array[i], closestNoOver, sortType)) {
+           //if the term we're looking at is smaller than the string
+		   closestNoOver = array[i]; indexNoOver = i
+		 }
+		}
+	   }
+	 }
+	 if (method != 'equal' && closestNoOver != undefined) {
+	 if (returnType == 'index') {return indexNoOver} else {return !!(indexNoOver+1)}
+	 }
+	 if (returnType == 'index') {return -1} else {return false}
+  }
+  let left=0; let right= array.length; let lastLeft = -1; let lastRight = -1; let i=0
+  let termSuperlative = ''
+  if (method != 'equal') {array.unshift(' ')}
+  while (right != lastRight || left != lastLeft) {
+    if (array.length == 0) {break}
+  lastLeft = left; lastRight = right;
+  let windex = Math.floor((right-left)/2) +left;
+  //console.log(windex, array[windex], left, right)
+  if (method == 'equal') {
+    if (array[windex] == string) {
+    if (returnType == 'index') {
+      return windex
+      break
+    } else {
+      return true
+      break
+    }
+  }
+    } else if (method == '>') {
+      if (isGreaterThan(array[windex], termSuperlative)) {
+        termSuperlative = windex
+      }
+    }
+    if (isGreaterThan(array[windex], string, sortType)){
+    right = windex
+    } else {
+     left = windex
+   }
+    //console.log(left, lastLeft, right, lastRight)
+    i++
+  }
+  //console.log(i)
+  if (returnType == 'index') {
+    if (method == '>' || method == '<') {
+      if (isGreaterThan(array[1], string)) {return -1} else {return termSuperlative-1}}
+    return -1
+  }
+  return false
+} //end func
+
+function isGreaterThan(val1, val2, method='alpha') {
+  if (method == 'alpha') {
+    let binary= val1.localeCompare(val2) //This is supposed to alphabetically convert strings
+    if (binary > 0) {
+      return true
+    } else if (binary == 0) {
+      return 'delete a term!'
+    } else {
+      return false
+    }
+  } else {
+    return val1 < val2
+  }
+} //end func
+    
+function superPush(array, termID, term) {
+  return array.toSpliced(termID,0, term)
+}
+    
+function addTermtoSorted(array, term, twinArray = ['#AU#']) {
+let indexof18 = binarySearch(term, array, '>'); console.log('almost', indexof18, array[indexof18])
+while (array[0] == ' ') {array.shift()}
+if (array[indexof18 +1] == term) {
+if (twinArray != '#AU#') {
+   return [array, indexof18+1, twinArray]
+  } else { return [array, indexof18+1]}
+} //This is supposed to check if the term is in the list
+let result = [superPush(array, indexof18 + 1, term), indexof18+1, superPush(twinArray, indexof18+1, undefined)]
+console.log(result)
+if ((result[2])[indexof18 + 1] == '#AU#') {result.pop()}; return result
+}
+ const surrogatePairRegExp= /[\uD800-\uDBFF]|[\uDC00-\uDFFF]/g
+ //const quoteRegex = /"|“|”/g
+ let setupPuzzle = ''; let lastTextareaContent = emptyTextArea.value
+ let insideQuoteCheck = false
+emptyTextArea.addEventListener("input", (inputEvent) =>{
+  console.log('FOUND INPUT EVENT OF', setupPuzzle)
+  let lastSetupPuzzle = setupPuzzle
+  //console.log(lastTextareaContent)
+  if (inputEvent.data != null && canStore) {
+  if ((inputEvent.data).length == 1) {
+   console.log('made it')
+     if(inputEvent.data == '<') {
+	  setupPuzzle += '<'
+	  console.log('YAYA', setupPuzzle)
+	 } else if (inputEvent.data == '>') {
+	  setupPuzzle += '>'
+	 } else if (inputEvent.data == 'N') {
+	  setupPuzzle += 'N'
+	 } else if (inputEvent.data == 'O' && setupPuzzle == 'N') {
+	  setupPuzzle += 'O'
+	 } else if (inputEvent.data == 'T' && setupPuzzle == 'NO') {
+	  setupPuzzle += 'T'
+	 } else if (inputEvent.data == '“' || inputEvent.data == '”') {
+	  replaceInTextarea(inputEvent.data, emptyTextArea)
+	 }
+  } else {
+    if ((emptyTextArea.value).search(surrogatePairRegExp) != -1) {
+	 emptyTextArea.value = lastTextareaContent
+	 let emojiError = document.getElementById('emojiError')
+	  emojiError.innerText = `The value "${inputEvent.data}" is invalid because it would mess with processing
+	  to some degree. A fix may be available in future versions. To avoid getting this error, I reccomend 
+	  not using any emoji. Also sorry to people who got this error when trying to write in their native language.`
+	} else {
+	}
+  }
+   if (setupPuzzle == '<' && (inputEvent.data == '-' || inputEvent.data == '=')) {
+    console.log(setupPuzzle + inputEvent.data + ' INPUTTED!')
+	replaceInTextarea(setupPuzzle+inputEvent.data, emptyTextArea)
+   } else if ((setupPuzzle == '>' || setupPuzzle == 'NOT') && inputEvent.data == '=') {
+     console.log(setupPuzzle + inputEvent.data + ' INPUTTED')
+      replaceInTextarea(setupPuzzle+inputEvent.data, emptyTextArea)
+   } 
+   if (setupPuzzle == lastSetupPuzzle){
+    //above condition only happens when we haven't found a valid character
+	setupPuzzle = ''
+   }
+ }
+ //console.log(insideQuoteCheck)
+ lastTextareaContent = emptyTextArea.value
+ })
+ 
+ let boardButton = document.getElementById('mikeTheBoardPlease')
+ let widthBoard = document.getElementById('width')
+ let heightBoard = document.getElementById('height')
+ let encodingMethod = document.getElementById('method')
+ let errorManager = document.getElementById('errorBoard')
+ let chosenHeight; let chosenWidth; let chosenMethod
+ console.log(boardButton)
+ boardButton.addEventListener("click", event => {
+ if (Number.isNaN(heightBoard.value) || Number.isNaN(widthBoard.value)) { errorManager.textContent = "Both the height and width must be numbers. Try again"; return undefined
+ } else if (widthBoard.value == 0 && heightBoard.value == 0) { errorManager.textContent = 'Both width and height cannot be 0 for your board. Pick a diffrent number.'; return undefined
+ }else {errorManager.textContent = ''}
+ let possiblyThere = document.getElementById('gameBoard')
+ if (possiblyThere) {possiblyThere.remove();possiblyThere.innerHTML = ''; possiblyThere=''}
+  //console.log('OMEGA FLOWERY!', event)
+  console.log(widthBoard.value, heightBoard.value, encodingMethod.value)
+  chosenMethod = encodingMethod.value; chosenHeight = heightBoard.value;
+  chosenWidth = widthBoard.value;
+  let containerDiv = document.createElement("div")
+  containerDiv.id = "bordForm"
+  //This div exsists so that we can remove the form really easily
+  let removeButton = document.createElement("button")
+  removeButton.id = "resetBoard"
+  removeButton.textContent = "Restart Generation"
+  containerDiv.append(removeButton)
+  if (chosenMethod != 'Random') {
+  let methodInformer = document.createElement("label")
+  if (chosenMethod == "Huffmann") {
+   methodInformer.innerText = "\n How Our Hufmann Encoding Works: \n Every 1 you type is encoded to a passable square, every 00 is encoded to an unpassable square, every 010 to a robot square, and every 011 to a cheese square. For example: 001101011100 means 1 unpassable square followed by 2 passable squares followed by the robot followed by 3 passable squares followed by an unpassable square. \n \n Row Generation: \n"
+  }
+  if (chosenMethod == "Basic") {
+  methodInformer.innerText = "\n How Our Basic Encoding Works: \n Every 1 is encoded to a passable square, every 2 to an unpassable square, every 3 to the robot, and every 4 to the cheese. For example: 21131112 means 1 unpassable square followed by 2 passable squares followed by the robot followed by 3 passable squares, and ended by an unpassable square. \n \n Row Generation: \n"
+  }
+  containerDiv.append(methodInformer)
+  for (let i=0; i < chosenHeight; i++) {
+  let newInput = document.createElement("input")
+  newInput.type = "text"
+  newInput.id = `BoardInput${i}`
+  //newInput.classList.value = `${chosenMethod} boardInput` 
+  let label = document.createElement("label")
+  label.textContent = `Insert the values for Row ${i+1} here: `
+   containerDiv.append(label) 
+   containerDiv.append(newInput)
+  containerDiv.append(document.createElement("br"))  
+  //This part starts by creating an input and a label, giving the input an ID, and
+  //then appending them to my div element in addition to a space
+ }
+  } else {
+   let label = document.createElement("label")
+   label.textContent = "Because you created this board randomly, you don't need to set row values. You can just hit the button below"
+  containerDiv.append(label)
+  }
+  let sumbitButton = document.createElement("button")
+   sumbitButton.textContent = "When finished, hit this button"
+   sumbitButton.id = "finishBoard"
+   containerDiv.append(sumbitButton)
+   document.body.insertBefore(containerDiv, errorManager)
+   //This adds all the finished content to the page
+   boardButton.innerText = "Button currently disabled."
+   boardButton.disabled = true
+   widthBoard.disabled = true
+   heightBoard.disabled = true
+   encodingMethod.disabled = true
+   //Disable all buttons inside step 1
+   removeButton.addEventListener("click", restartGeneration)
+   sumbitButton.addEventListener("click", createBoard)
+ },)
+ 
+ function restartGeneration() {
+ let goingToGetRemoved = document.getElementById("bordForm")
+ goingToGetRemoved.remove()
+ goingToGetRemoved = ''
+ boardButton.textContent = "Push this button to begin generating a board!"
+ errorManager.textContent = ""
+ console.log(goingToGetRemoved)
+    boardButton.disabled = false
+   widthBoard.disabled = false
+   heightBoard.disabled = false
+   encodingMethod.disabled = false
+ }
+ const oneFourRegex = /[0-4]/g
+ const HuffmanRegex = /1|010|011|00/g
+ function createBoard() {
+   let boardCreationArray = ''; let randomNumber;
+   if (chosenMethod != 'Random')
+   {
+   for (let i=0; i < chosenHeight; i++) {
+   let temp = document.getElementById(`BoardInput${i}`)
+   if (chosenMethod == 'Huffmann') {
+    let checkingForErrors = (temp.value.match(HuffmanRegex))
+	 console.log(checkingForErrors)
+     if (checkingForErrors.length != chosenWidth) {errorManager.textContent = `Row ${i+1} does not have ${chosenWidth} characters to encode into your specified width. To change your set width, hit "restart generation" and then you can change the textbox inside "width";`
+	 errorManager.gibberishliekajisfoidsosojiaoioiadsoiasosidoisj()}
+	 else {boardCreationArray += checkingForErrors.join("")}
+   } else {
+   let checkingForErrors = (temp.value.match(oneFourRegex))
+     if (checkingForErrors.length != chosenWidth) {errorManager.textContent = `Row ${i+1} does not have ${chosenWidth} characters to encode into your specified width. To change your set width, hit "restart generation" and then you can change the textbox inside "width";`
+	 errorManager.gibberishliekajisfoidsosojiaoioiadsoiasosidoisj()}
+	 else {boardCreationArray += checkingForErrors.join("")}
+   }
+   }
+   }else {
+    for (let i=0; i < chosenHeight*chosenWidth; i++) {
+	  randomNumber = Math.random()
+	  if (randomNumber < 0.9) {
+	   boardCreationArray += '1'
+	  } else {
+	  boardCreationArray += '2'
+	  }
+	}
+    boardCreationArray = boardCreationArray.split('')
+	let newRandomNumber = Math.round(Math.random()*chosenHeight*chosenWidth)
+	boardCreationArray[newRandomNumber] = '3'
+	boardCreationArray[Math.round(Math.random()*chosenHeight*chosenWidth)] = '4'
+     if (boardCreationArray[newRandomNumber] != '3') {
+	 boardCreationArray[newRandomNumber] = '3'
+	 boardCreationArray[0] = '4'
+	 }
+    boardCreationArray = boardCreationArray.join('')
+   }
+   
+   console.log(boardCreationArray); let index = 0
+   let boardContainer = document.createElement('div')
+   boardContainer.id = "gameBoard"
+   boardContainer.classList.value = "gameBoard"
+   boardContainer.setAttribute('style',`grid-template-rows: repeat(${chosenHeight}, 21.32px); grid-template-columns: repeat(${chosenWidth}, 21.32px); grid-template-ares: none;`);
+     //Basic encoding    
+    let goalCreated = false; let robotCreated = false;
+    while (index < boardCreationArray.length) {
+    let newSpace = document.createElement('div');
+      newSpace.id = `${Math.floor(index/chosenWidth)},${index % chosenWidth}`    
+	 if (boardCreationArray[index] == 1){ newSpace.classList.value = 'passableSquare';}
+     if(boardCreationArray[index] == 2) { newSpace.classList.value = 'unpassableSquare';}
+	 if (boardCreationArray[index] == 4 && !(goalCreated)){ newSpace.classList.value = 'goal'; goalCreated = true;console.log('goal found!');}
+	 if(boardCreationArray[index] == 3 && !(robotCreated)) { 
+	  newSpace.classList.value = 'passableSquare';
+	  let robotCreate = document.createElement('div');
+	  robotCreate.classList.value = 'robotRight';
+	  robotCreate.id = "robot"
+	  robotStartingPosition = `${Math.floor(index/chosenWidth)},${index % chosenWidth}`
+	  newSpace.append(robotCreate); robotCreated = true
+	  console.log('robot found')
+	  }
+	  boardContainer.append(newSpace)
+	 index++;
+   }
+   if (goalCreated && robotCreated) {
+	  console.log('Grr arrgh!')
+	  if (canStore) {localStorage.setItem('boardCreation', boardCreationArray);
+	  localStorage.setItem('chosenWidth', chosenWidth)
+	  localStorage.setItem('chosenHeight', chosenHeight)
+	  }
+	  document.body.insertBefore(boardContainer, errorManager)   
+    } else {
+	boardContainer.innerHTML = ''; boardContainer=''; errorManager.textContent = "Please define a robot and goal."
+	}
+	console.log(document.getElementsByClassName('robotRight'))
+ 
+   restartGeneration();
+   //end while loop
+  console.log("AWOOGA!")
+ }
+  if (canStore) {
+  let boardCreationArray = localStorage.getItem('boardCreation');
+  chosenWidth = localStorage.getItem('chosenWidth')
+  chosenHeight = localStorage.getItem('chosenHeight')
+  if (chosenWidth && boardCreationArray && chosenHeight) {
+  let boardContainer = document.createElement('div')
+   boardContainer.id = "gameBoard"
+   boardContainer.classList.value = "gameBoard"
+   boardContainer.setAttribute('style',`grid-template-rows: repeat(${chosenHeight}, 21.32px); grid-template-columns: repeat(${chosenWidth}, 21.32px); grid-template-areas: none;`);
+     let goalCreated = false; let robotCreated = false; let index=0
+     console.log(boardContainer, boardCreationArray);
+	while (index < boardCreationArray.length) {
+    let newSpace = document.createElement('div');
+     newSpace.id = `${Math.floor(index/chosenWidth)},${index % chosenWidth}`      
+	 if (boardCreationArray[index] == 1){ newSpace.classList.value = 'passableSquare';}
+     if(boardCreationArray[index] == 2) { newSpace.classList.value = 'unpassableSquare';}
+	 if (boardCreationArray[index] == 4 && !(goalCreated)){ newSpace.classList.value = 'goal'; goalCreated = true;console.log('goal found!');}
+	 if(boardCreationArray[index] == 3 && !(robotCreated)) { 
+	  newSpace.classList.value = 'passableSquare';
+	  let robotCreate = document.createElement('div');
+	  robotCreate.classList.value = 'robotRight';
+	  robotStartingPosition = `${Math.floor(index/chosenWidth)},${index % chosenWidth}`
+	  robotCreate.id = "robot"
+	  newSpace.append(robotCreate); robotCreated = true
+	  console.log('robot found')
+	  }
+     boardContainer.append(newSpace); index++;
+	 }
+	 if (goalCreated && robotCreated) {
+	  console.log('Grr arrgh!')
+	  document.body.insertBefore(boardContainer, errorManager)   
+    } else {
+	boardContainer.innerHTML = ''; boardContainer=''; errorManager.textContent = "Please define a robot and goal."
+	}
+  }}
+ function replaceInTextarea(string, textarea) {
+   //let regexp = new RegExp(string,'g')
+   let valueToReplace = ''
+   if (string == '<-') {valueToReplace = '←'}
+   if (string == '<=') {valueToReplace = '≤'}
+   if (string == '>=') {valueToReplace = '≥'}
+   if (string == 'NOT=') {valueToReplace = '≠'}
+   if (string == '“' || string == '”') {valueToReplace = '"'}
+   let indexOfTyped = emptyTextArea.selectionStart -1
+   console.log(indexOfTyped, emptyTextArea[indexOfTyped])
+    let iterateOver = emptyTextArea.value.split("")
+	iterateOver[indexOfTyped] = valueToReplace
+	for (let i=1; i < string.length; i++) {
+	 iterateOver[indexOfTyped-i] = ''
+	}
+    iterateOver = iterateOver.join("")
+	textarea.value = iterateOver
+	textarea.selectionStart = indexOfTyped - (string.length-2)
+	textarea.selectionEnd = indexOfTyped - (string.length-2)
+ }
+ //let timesRan = 0
+ 
+ function moveForward() {
+  console.log('moveForward called!')
+  let robot = document.getElementById('robot')
+  if (robot == null) {globalDisplay('Cannot use function MOVE_FORWARD when board is not generated.','error')}
+   let oldParent = robot.parentNode
+   let coordinates = oldParent.id.split(',')
+   let robotDirection = robot.classList.value.substring(5)
+  
+   if (robotDirection == 'Right') {
+      coordinates[1] = +(coordinates[1]) +1
+   } else if (robotDirection == 'Left'){
+     coordinates[1] = Number(coordinates[1]) -1
+   } else if (robotDirection == 'Top') {
+     coordinates[0] = Number(coordinates[0]) -1
+   } else {coordinates[0] = Number(coordinates[0]) +1;}//Left, Right, Top and Bottom are the names
+   //This is supposed to change the coordinates from the ones that the robot
+   //started on to the ones it should be landing on
+   coordinates = coordinates.join(',')
+   console.log(coordinates)
+   let robotSpace = document.getElementById(coordinates)
+   if (robotSpace == null) {return '#B'}
+   robot.remove()
+   robotSpace.append(robot);
+   if (robotSpace.classList.value == 'unpassableSquare') {
+    return '#U'
+   }
+   if (robotSpace.classList.value == 'goal') {
+    return [coordinates]
+   }
+   return coordinates
+   //CMB
+ }
+ 
+ function canMove(direction) {
+ //Bottom is the direction, Right is the rotation
+ //MKE settings Button creation convertNumbers
+  direction = direction.toLowerCase()
+  console.log('canMove called!');
+  //Top, Right, Left, Bottom
+  let robot = document.getElementById('robot');
+  //0 0 in example case
+  robot == null && globalDisplay('CAN_MOVE does not work without a board!', 'error')
+  //DIRECTIONS MUST BE RELATIVE TO THE ROBOT!
+  //Direction (foward,backward,left,right)
+  if (direction == 'DF#' || direction == '"forward"') {direction = 'Top'}
+  if (direction == 'DB#' || direction == '"backward"') {direction = 'Bottom'}
+  if (direction == 'DL#' || direction == '"left"') {direction = 'Left'}
+  if (direction == 'DR#'|| direction == '"right"') {direction = 'Right'}
+  //clean the data
+  let robParentid = robot.parentNode.id.split(',')
+  if(( (direction == 'Top' || direction == 'Right') && (robotRotation == 'Top' || robotRotation == 'Right') && robotRotation != direction) || ( (direction == 'Bottom' || direction == 'Left') && (robotRotation == 'Bottom' || robotRotation == 'Left') && robotRotation != direction) ) {
+  //Top Right, Right Top, Bottom Left, Left Bottom
+  robParentid[1] = +(robParentid[1])+1} //0 1
+   else if((direction == robotRotation && (direction == 'Top' || robotRotation == 'Bottom'))||((robotRotation == 'Left' || direction == 'Left') && (robotRotation == 'Right' || direction == 'Right') && robotRotation != direction )){
+   //Top Top, Bottom Bottom, Left Right, Right Left
+   robParentid[1] = +(robParentid[1])-1} // 0 -1
+   else if( ( (direction == 'Bottom' || direction == 'Right') && (robotRotation == 'Bottom' || robotRotation == 'Right') && robotRotation != direction) || ( (direction == 'Top' || direction == 'Left') && (robotRotation == 'Top' || robotRotation == 'Left') && robotRotation != direction) ) {
+   //Right Bottom, Bottom Right, Top Left, Left Top
+   robParentid[0] = +(robParentid[0])-1
+   console.log('This is one square to the left of the previous thing', robotRotation, direction)
+   } // -1 0
+    else if((  (direction == 'Top' || direction == 'Bottom') && (robotRotation == 'Top' || robotRotation == 'Bottom') && robotRotation != direction) || ( direction == robotRotation && (direction == 'Left' || robotRotation == 'Right'))) {
+	//Right Right, Left Left, Top Bottom, Bottom Top
+	robParentid[0] = +(robParentid[0])+1 // 1 0
+	}else {console.log(robotRotation, direction);globalDisplay('Something bad happened!','error')} 
+	//up down left and right
+	// forward, backward, left, right
+  //FACING RIGHT: correct, correct, correct, correct
+  //FACING DOWN: (1 0 vs 0 1) +1 -1, +1 -1(-1 0 vs WANTED: 0 -1), 
+  //+1 +1 (WANTED: 0 1 GOTTEN: -1 0), (WANTED: 0 -1 GOTTEN: 1 0) -1 -1
+  //FACING UP: (GOTTEN: 0 1 WANTED: -1 0) -1 -1, (GOTTEN: 0 -1 WANTED: 1 0) +1 +1
+  // (GOTTEN: -1 0, WANTED: 0 -1) +1 +1, (GOTTEN: 1 0, WANTED: 0 1), -1 -1
+  //FACING LEFT: TMRW
+  robParentid = robParentid.join(',')
+  console.log(robParentid);
+  let oo = document.getElementById(robParentid)
+  return !(oo == null || oo.classList.value == 'unpassableSquare')
+ }
+ 
+ function seperateConds(arbitCode) {
+   /*Here, find the curly brackets and if there's a valid conditional part (IF, ELSE, TIMES)
+   or UNTIL inside the line before the curly brackets*), add it to an array  */
+   let detectState = 0; let pushIG = ''; let startingNumber = condArray.length
+   let amountOfTerms = 0; let nestedNumber = 0
+    console.log(arbitCode)
+     //if (timesRan == 1) {asiojdaoijsdaoijsadfoijsdfaoijsdaoijfsdaoijasdfoij}
+	//timesRan++
+   for (let i=0; i < arbitCode.length; i++) {
+     let currentLine = arbitCode[i].split("");
+	  //console.log(pushIG, detectState, nestedNumber, 'Line: ' + i)
+	  if (pushIG != '' && !(currentLine[0] == '}' && detectState == 1) && !(currentLine[0] == '{' && detectState == 0)) {
+	  pushIG += ','
+	 }
+	 for (let j=0; j < currentLine.length; j++) {
+	    
+	     if (currentLine[j] == '}' && detectState!= 0 && nestedNumber == 0) 
+		 {detectState-- //and excludes the last one as well
+	   currentLine[j] = ''
+	   } else if (currentLine[j] == '}' && detectState != 0) {
+	   nestedNumber--;
+	   }
+	   if (currentLine[j] == '{' && detectState != 0){
+	  nestedNumber++
+	  }
+	    if (detectState != 0) {pushIG += currentLine[j];
+	  currentLine[j] = ''}
+	  if (currentLine[j] == '{' && detectState == 0) { detectState++ //deliberatly excludes the first character
+	  currentLine[j] = ''}
+	  if (detectState === 0 && pushIG != '') {
+	    console.log(pushIG, 'pushing')
+	    condArray.push(pushIG)
+		pushIG = ''
+		amountOfTerms++
+	  }
+	  //console.log('Inside Loop', 'Character: ' + j, detectState, nestedNumber)
+	 }
+	 arbitCode[i] = currentLine.join("")
+   } //end for the entire arbitrary code
+   
+   //Error: Right parentheses inside nested conditionals does count as a parentheses set.
+   //Possibly only first left parentheses is spared
+   if (detectState != 0) { //Curly braces don't match, yell at them for it
+    globalDisplay(`This is something we all do at some point. The curly brackets don't add up
+	to an even number. You opened a line without closing one. Or perhaps you ended a line you did not start.
+	 I advise you leave a comment (# to start and # to end) with what the brackets start and end. That should
+	 help you realize where your missing curly brackets are. Best of luck.`, 'error')
+	 return '#ABORT#'
+   }
+   //let err = 'failed'.push(undefined)
+    for (let i=0; i < arbitCode.length; i++) {
+	 //if ((arbitCode[i])[arbitCode[i].length -1] == ',') {arbitCode[i] = substring(arbitCode[i], arbitCode[i].length-2)}
+	 if (arbitCode[i] == '') {
+	   arbitCode = superShift(arbitCode, i)
+	   i--
+	 }
+	}
+	if (arbitCode[arbitCode.length-1] == '') {arbitCode.pop()}
+	globalDisplay(arbitCode + '\n' + condArray, 'report')
+	console.log(arbitCode); console.log(condArray)
+	//if (timesRan == 2) {asiojdaoijsdaoijsadfoijsdfaoijsdaoijfsdaoijasdfoij}
+	//timesRan++
+	
+	//let errorMaker = undefined; errorMaker.push(undefined)
+	
+	//PFR - Many of these are due for an upgrade to speed up performance.
+	//Some are very very slow right now.
+	
+	let lastStartingNumber = startingNumber; let rightParenthCount = 0
+	let forEach = false; let quoteQuoteQUOTE
+   for (let i=0; i < arbitCode.length; i++) {
+      let currentCond = arbitCode[i].split("")
+	  if (currentCond[currentCond.length -1] == ')') {
+	   quoteQuoteQUOTE = false;
+	   forEach = false
+	   rightParenthCount = 0
+	    for(let i = currentCond.length; i > 0; i--) {
+		 //console.log(i, currentCond.length)
+		 if (currentCond[i] == '"') {quoteQuoteQUOTE = !(quoteQuoteQUOTE)}
+		  if (currentCond[i] == ')') {rightParenthCount++}
+		  if (currentCond[i] == '(') {rightParenthCount--}
+		 if (currentCond[i] == '(' && quoteQuoteQUOTE == false && rightParenthCount == 0) {
+		  if (currentCond[i-2] == 'I' && currentCond[i-1] == 'F') {
+		     currentCond[currentCond.length-1] = undefined
+		     currentCond[i] = undefined
+		     let restofArray = currentCond.splice(0, i-2)
+			  currentCond.shift(); currentCond.shift() //removes the IF
+			  currentCond = currentCond.join("");
+			  currentCond = `IF(${currentCond},#${startingNumber}#)`;
+			  startingNumber++
+			  currentCond = restofArray.join("") + currentCond
+			  console.log(currentCond, condArray[startingNumber-1])
+		  } else if (currentCond[i-1] == 'L' && currentCond[i-2] == 'I' && currentCond[i-3] == 'T' && currentCond[i-4] == 'N' && currentCond[i-5] == 'U' && currentCond[i-6] =='T' && currentCond[i-7] == 'A' && currentCond[i-8] == 'E' && currentCond[i-9] == 'P' && currentCond[i-10] == 'E' && currentCond[i-11] == 'R') {
+		    
+		    //Spelling bee: REPEATUNTIL backwards (LITNUTAEPER) starting at i-1
+			currentCond[currentCond.length-1] = undefined
+		     currentCond = currentCond.join("")
+                             globalDisplay(currentCond, 'report')
+                             currentCond += ',#' + startingNumber + '#)'
+                            startingNumber++;
+		  }else {
+		   lastStartingNumber++;
+		  }
+		 }
+		} if (startingNumber == lastStartingNumber) {
+		 globalDisplay(`Huh? You DIDN'T HAVE A left hand parentheses after the right one? Or perhaps you
+		 forgot to finish a string or start it. Tip: Make sure you close a string and open it (both WITH
+		 the exact same button, ") when you want to. Also, please count your parentheses. Count up with a
+		 new (, and count down with a new ). If you do not get 0, something is wrong. Remeber closing parentheses do not
+		 do double duty. They close exactly what they opened.`, 'error')
+		 return '#ABORT#'
+		}//end for
+	  } //end if for IF statements
+	  if (currentCond[currentCond.length-1] == 'S' && currentCond[currentCond.length-2] == 'E' && currentCond[currentCond.length-3] == 'M' && currentCond[currentCond.length-4] == 'I' && currentCond[currentCond.length-5] == 'T') {
+	    //Make above spell out TIMES in REPEAT n TIMES (SEMIT)
+		currentCond.splice(currentCond.length -5, currentCond.length-1)
+		 for (let i= currentCond.length; i > 0; i--) {
+		   //console.log(i, currentCond.length)
+		   let quoteQuoteQUOTE = false
+		   if (currentCond[i] == '"') { quoteQuoteQUOTE = !(quoteQuoteQUOTE)}
+		   if (quoteQuoteQUOTE == false && currentCond[i] == 'T' && currentCond[i-1] == 'A' && currentCond[i-2] == 'E' && currentCond[i-3] == 'P' && currentCond[i-4] == 'E' && currentCond[i-5] == 'R') {
+		     let restofArray = currentCond.splice(0, i+1)
+			 //currentCond = superPush(currentCond, 6, '(')
+			 currentCond = `REPEAT(${currentCond.join("")}, #${startingNumber}#)`
+			 startingNumber++
+			 console.log(currentCond, condArray[startingNumber-1])
+			//This time, spell REPEAT (TAEPER)
+		   }
+		 } if (startingNumber == lastStartingNumber) {
+		 globalDisplay(`What? You said TIMES without saying REPEAT? TIMES cannot be declared
+		 as a variable, and if it can, contact me! This is a strange error. Uh... bye?`, 'error')
+		 return '#ABORT#'
+		 }//end going back for loop
+	  } //END if for REPEAT statments
+	  let parenthOfProcedure = -1
+	  for (let i=currentCond.length; i > 0; i--) {
+	  if(currentCond[currentCond.length -1] == 'E' && currentCond[currentCond.length -2] == 'S' && currentCond[currentCond.length -3] == 'L' && currentCond[currentCond.length -4] == 'E') {
+	    currentCond = `${currentCond.join("")}(#${startingNumber}#)`
+		startingNumber++
+		break
+	  } //END if for ELSE statements
+	  if (currentCond[i] == '"') {quoteQuoteQUOTE = !(quoteQuoteQUOTE)}
+	  if (currentCond[i] == '\uF8FC' && !(quoteQuoteQUOTE)) {
+	    currentCond[i] = ','
+		currentCond[currentCond.length] = ',#' + startingNumber + '#)'
+	    forEach = true
+		}
+      //console.log(forEach, currentCond[i])		
+		if (forEach && !(quoteQuoteQUOTE) && currentCond[i] == 'H' && currentCond[i-1] == 'C' && currentCond[i-2] == 'A' && currentCond[i-3] == 'E' && currentCond[i-4] == 'R' && currentCond[i-5] == 'O' && currentCond[i-6] == 'F') {
+		   console.log('Howdy! I am Flowery!')
+		   currentCond[i] = '('
+		   currentCond[i-1] = 'CH'
+		  startingNumber++
+		  break
+		}
+	    if (!(quoteQuoteQUOTE) && currentCond[i] == '(') {
+		 console.log('hey!')
+		 parenthOfProcedure = i
+		}
+		//ERUDECORP
+	    if (!(quoteQuoteQUOTE)&&currentCond[i] == 'E' && currentCond[i-1] == 'R' && currentCond[i-2] == 'U' && currentCond[i-3] == 'D' && currentCond[i-4] == 'E' && currentCond[i-5] == 'C' && currentCond[i-6] == 'O' && currentCond[i-7] == 'R' && currentCond[i-8] == 'P') {
+		 if (parenthOfProcedure == -1 || currentCond[currentCond.length-1] != ')') {globalDisplay(`PROCEDUREs have to have parentheses surrounding them denoting the parameters, and even if there aren't any parameters, an empty space between them is still necesary.`, 'error')}
+		 currentCond[parenthOfProcedure] = ','
+		 currentCond[i] = 'E('
+		 currentCond[currentCond.length -1] = `,#${startingNumber}#)`
+		 console.log(currentCond)
+		 console.log(currentCond.join(""))
+		 console.log('Jerona!!!!!!!!!!!')
+		 startingNumber++
+		}
+	  }
+	  //previous for loop sets a value to true if IN is found, and then if the value's true and FOREACH is found, reformats it elegantly.
+	  if (forEach && startingNumber == lastStartingNumber) {
+	   globalDisplay('FOR EACH item IN myList loops start with FOR EACH, and if you\'re just using the IN randomly, I suggest you don\'t do that.', 'error')
+	  }
+	  //Plan of attack: wait until you see the IN
+	  if (typeof(currentCond) != 'string') {
+	  arbitCode[i] = currentCond.join("")
+	  } else {
+	   arbitCode[i] = currentCond
+	  }
+	  lastStartingNumber = startingNumber
+   } globalDisplay(arbitCode, 'report'); console.log(arbitCode, condArray)
+   return arbitCode
+   /*If we are to increase efficency, we should make this take assignType's job for conditionals
+   and assignType should detect if it's job was taken by this function for this line*/
+ }
+ 
+ function linearSearchOutsideString(list, char, AndBrackets = false) {
+  let quote = true; let brackets = true
+  for (let i=0; i < list.length; i++) {
+  if (list[i] == '"') {quote = !(quote)}
+  if(list[i] == '[' || list[i] == ']') {
+  if (AndBrackets){brackets = !(brackets)}}
+    if (list[i] == char && quote && brackets) {
+	  return i
+	}
+  }
+   return -1
+ }
+ 
+ function setGameBoardSize(width, height) {
+document.getElementsByClassName("gameBoard")[0].style.gridTemplateRows = `repeat(${width}, 21.32px)`;
+ document.getElementsByClassName("gameBoard")[0].style.gridTemplateColumns = `repeat(${height}, 21.32px)`;
+  console.log(gameBoard)
+ }
+ 
+  function rotateRobot(direction) {
+  let robot = document.getElementById('robot')
+  console.log(robotRotation)
+  if ((robotRotation == "Right" && direction == "Left")|| (robotRotation == "Left" && direction == 'Right')) {
+   robotRotation = "Top"
+  }
+  else if ((robotRotation == "Top" && direction == "Right")|| (robotRotation == "Bottom" && direction == 'Left')) {
+   robotRotation = "Right"
+  }
+  else if ((robotRotation == "Bottom" && direction == "Right")|| (robotRotation == "Top" && direction == 'Left')) {
+   robotRotation = "Left"
+  }
+  else if (robotRotation == direction) {
+   robotRotation = "Bottom"
+  }
+  console.log(robotRotation);
+  robot.classList.value = `robot${robotRotation}`
+  //Left, Right, Bottom, and Top are the rotation directions
+ }
+if (!(canStore)){
+let thing = document.getElementById('warnythingy')
+if (thing != null) {
+ thing.textContent = 'Error with text parser!'
+}
+}
+  </script>
+    </main>
+  </body>
+</html>
+
+
+
+
+  
+
