@@ -2712,7 +2712,7 @@ function globalDisplay(arg, type = 'userOrdered', link = null) {
   if (settings.DISPLAYSeperatedNewLine) {arg = '#ERROR MESSAGE#: \n' + arg}
   else {arg = '#ERROR MESSAGE#: \u0009' + arg}
   }
-  //if (type == 'report') {return 0}
+  if (type == 'report') {return 0}
  if (settings.DISPLAYSeperatedNewLine) {
  thingToChange.textContent += (arg + '\n' + '\n')}
 else {thingToChange.textContent += arg + '      '} 
