@@ -26,7 +26,12 @@
 	 background-color: rgb(230, 230, 230);
 	}
 	.boardInput {
-	 width: 30px
+	 min-width: 30px;
+	 width: auto;
+	}
+	.rowInput {
+	 min-width: 160px;
+	 width: auto;
 	}
 	:root{
 	 --gameBorderColor: rgba(0,0,0,1);
@@ -3052,6 +3057,7 @@ emptyTextArea.addEventListener("input", (inputEvent) =>{
   for (let i=0; i < chosenHeight; i++) {
   let newInput = document.createElement("input")
   newInput.type = "text"
+  newInput.class = "rowInput"
   newInput.id = `BoardInput${i}`
   //newInput.classList.value = `${chosenMethod} boardInput` 
   let label = document.createElement("label")
